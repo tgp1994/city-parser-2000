@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "City Parser 2000", "City Parser 2000.csproj", "{76CCAF41-C43D-41F3-A547-519167BDEAAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CP2000UnitTester", "CP2000UnitTester\CP2000UnitTester.csproj", "{8E6B6F91-76B7-4C05-94FB-DADB8699D8B2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76CCAF41-C43D-41F3-A547-519167BDEAAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76CCAF41-C43D-41F3-A547-519167BDEAAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76CCAF41-C43D-41F3-A547-519167BDEAAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76CCAF41-C43D-41F3-A547-519167BDEAAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E6B6F91-76B7-4C05-94FB-DADB8699D8B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E6B6F91-76B7-4C05-94FB-DADB8699D8B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E6B6F91-76B7-4C05-94FB-DADB8699D8B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E6B6F91-76B7-4C05-94FB-DADB8699D8B2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
