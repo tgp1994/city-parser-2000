@@ -15,12 +15,7 @@ namespace CP2000UnitTester
 		{
 			CityParser parser = new CityParser();
 
-			City ourCity = parser.ParseBinaryFile("C:\\Users\\Owner\\Desktop\\CitiesSC2000\\dustropolis.sc2");
-			//City ourCity = parser.ParseBinaryFile("C:\\Users\\Owner\\Desktop\\CitiesSC2000\\new city.sc2");
-			//City ourCity = parser.ParseBinaryFile("C:\\Users\\Owner\\Desktop\\CitiesSC2000\\dustropolis.sc2");
-			//City ourCity = parser.ParseBinaryFile("C:\\Users\\Owner\\Desktop\\CitiesSC2000\\altTest2.sc2");
-			//City ourCity = parser.ParseBinaryFile("C:\\Users\\Owner\\Desktop\\CitiesSC2000\\zoneTest.sc2");
-			//City ourCity = parser.ParseBinaryFile("C:\\Users\\Owner\\Desktop\\CitiesSC2000\\underground_test.sc2");
+			City ourCity = parser.ParseBinaryFile("E:\\Users\\Glen\\Desktop\\share\\blank.sc2");
 		}
 	}
 }

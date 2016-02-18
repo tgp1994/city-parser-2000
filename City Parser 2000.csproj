@@ -28,7 +28,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>City_Parser_2000</RootNamespace>
+    <RootNamespace>CityParser2000</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -44,7 +44,9 @@
     <Compile Include="Entity\Building.cs" />
     <Compile Include="Entity\City.cs" />
     <Compile Include="Entity\Tile.cs" />
+    <Compile Include="Segments\MISC.cs" />
     <Compile Include="Utility\CityTileIterator.cs" />
+    <Compile Include="Segments\DataSegment.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".git\COMMIT_EDITMSG" />
