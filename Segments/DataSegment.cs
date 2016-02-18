@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace CityParser2000.Segments
 {
@@ -21,6 +22,7 @@ namespace CityParser2000.Segments
 		/// </summary>
 		public int Length { get; internal set; }
 
+		// TODO: (Design consideration) why bother storing the raw data in the object when it's just going to be parsed anyways?
 		/// <summary>
 		/// The segment bytes as they're read in from the city file.
 		/// </summary>
@@ -32,7 +34,8 @@ namespace CityParser2000.Segments
 		public int RawDataFileOffset { get; internal set; }
 
 		/// <summary>
-		/// Create the DataSegment object based off of the 8 byte segment header.
+		/// Create the DataSegment object based off of the 8 byte segment header. Additional work should be done in
+		/// separate methods.
 		/// </summary>
 		/// <param name="type"><see cref="DataSegment.Type"/></param>
 		/// <param name="length"><see cref="DataSegment.Length"/></param>
@@ -40,6 +43,15 @@ namespace CityParser2000.Segments
 		{
 			Type = type;
 			Length = length;
+		}
+
+		/// <summary>
+		/// Perform segment-specific processing on the raw data.
+		/// </summary>
+		/// <param name="file">The city file that is being read in.</param>
+		internal void ParseData(FileStream file)
+		{
+			//Length = file.Rea
 		}
 	}
 }
