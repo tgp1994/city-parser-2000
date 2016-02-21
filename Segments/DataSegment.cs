@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using CityParser2000.Utility;
 
 namespace CityParser2000.Segments
 {
@@ -46,12 +47,13 @@ namespace CityParser2000.Segments
 		}
 
 		/// <summary>
-		/// Perform segment-specific processing on the raw data.
+		/// Perform segment-specific processing on the raw data. At this point the four byte type has already been read
+		/// in, so the position is at the four byte length int.
 		/// </summary>
 		/// <param name="file">The city file that is being read in.</param>
 		internal void ParseData(FileStream file)
 		{
-			//Length = file.Rea
+			Length = file.Read4ByteInt();
 		}
 	}
 }
