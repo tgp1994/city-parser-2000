@@ -39,11 +39,9 @@ namespace CityParser2000.Segments
 		/// separate methods.
 		/// </summary>
 		/// <param name="type"><see cref="DataSegment.Type"/></param>
-		/// <param name="length"><see cref="DataSegment.Length"/></param>
-		internal DataSegment(string type, int length)
+		internal DataSegment(string type)
 		{
 			Type = type;
-			Length = length;
 		}
 
 		/// <summary>
@@ -54,6 +52,19 @@ namespace CityParser2000.Segments
 		internal void ParseData(FileStream file)
 		{
 			Length = file.Read4ByteInt();
+			RawDataFileOffset = (int)file.Position;
+			RawData = new byte[Length];
+			file.Read(RawData, 0, Length);
+		}
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			sb.AppendLine("Type:\t" + Type);
+			sb.AppendLine("Length:\t" + Length);
+
+			return sb.ToString();
 		}
 	}
 }
