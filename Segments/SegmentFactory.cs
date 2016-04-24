@@ -15,6 +15,9 @@ namespace CityParser2000.Segments
 
 			switch (segmentName)
 			{
+				case "CNAM":
+					newSeg = new CNAM();
+					break;
 				case "MISC":
 					newSeg = new MISC();
 					break;

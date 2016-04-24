@@ -20,6 +20,8 @@ namespace CityParser2000.Segments
 			base.ParseSegment(file);
 
 			cityName = Encoding.ASCII.GetString(RawData);
+			// Clean up the padding
+			cityName = cityName.Substring(0, cityName.IndexOf('\0'));
 		}
 	}
 }

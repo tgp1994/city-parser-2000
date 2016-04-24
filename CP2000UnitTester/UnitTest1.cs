@@ -17,13 +17,13 @@ namespace CP2000UnitTester
 		public void Initialize()
 		{
 			city = City.ParseCityFile("E:\\Users\\Glen\\Desktop\\share\\blank.sc2");
-			Trace.Write("Data length came out to be " + city.DataLength);
+			Trace.WriteLine("Data length came out to be " + city.DataLength + " bytes.");
 		}
 		
 		[TestMethod]
 		public void CheckCityName()
 		{
-			Trace.Write("City name from the city object is: " + city.CityName);
+			Trace.WriteLine("City name from the City object is: " + city.CityName);
 		}
 	}
 }
