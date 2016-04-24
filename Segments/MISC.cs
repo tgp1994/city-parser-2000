@@ -10,13 +10,9 @@ namespace CityParser2000.Segments
 	/// The MISC segment contains miscellaneous information pertaining to the city. It is 4800 bytes compressed, and
 	/// is typically the second segment after CNAM. Indexed from 0 to 1199.
 	/// </summary>
-	class MISC : CompressedDataSegment
+	public class MISC : CompressedDataSegment
 	{
-		List<int> Data = new List<int>();
-
-		public MISC() : base("MISC") { }
-
-		#region Properties
+		#region Properties and Fields
 		public int Rotation { get {	return Data[2]; } }
 		public int FoundingYear { get { return Data[3]; } }
 		public int ElapsedDays { get { return Data[4]; } } //Note: All months are 25 days
@@ -24,6 +20,12 @@ namespace CityParser2000.Segments
 		public int SimNationPopulation { get { return Data[20]; } }
 		public int SeaLevel { get { return Data[912]; } }
 		#endregion
+
+		#region Variables
+		List<int> Data = new List<int>();
+		#endregion
+
+		public MISC() : base("MISC") { }
 
 		internal override void ParseSegment(FileStream file)
 		{
@@ -39,14 +41,16 @@ namespace CityParser2000.Segments
 			}
 		}
 
-		public override string ToString()
+
+		public string ToString(bool nonZeroOnly)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine(base.ToString());
 
 			for (int i = 0; i < Data.Count; ++i)
 			{
-				sb.AppendLine(string.Format("{0}\t{1}", i, Data[i]));
+				if (nonZeroOnly && Data[i] != 0)
+					sb.AppendLine(string.Format("{0}\t{1}", i, Data[i]));
 			}
 
 			return sb.ToString();

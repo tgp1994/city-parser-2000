@@ -22,12 +22,13 @@ namespace CityParser2000.Segments
 					newSeg = new MISC();
 					break;
 				default:
-					Debug.WriteLine("WARNING: Parsing unrecognized segment '" + segmentName + "'.");
+					Debug.WriteLine("WARNING: Parsing segment as generic:");
 					newSeg = new DataSegment(segmentName);
 					break;
 			}
 
 			newSeg.ParseSegment(stream);
+			Debug.WriteLine("Parsed " + segmentName + " segment.");
 			return newSeg;
 		}
 	}

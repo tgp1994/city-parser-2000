@@ -10,7 +10,7 @@ namespace CityParser2000.Segments
 	/// <summary>
 	/// Provide a generic guideline for Interchange File Format segments. Every segment has a type and positive length.
 	/// </summary>
-	class DataSegment
+	public class DataSegment
 	{
 		/// <summary>
 		/// An identifier of the segment, always four bytes (characters) long.
@@ -23,7 +23,6 @@ namespace CityParser2000.Segments
 		/// </summary>
 		public int Length { get; internal set; }
 
-		// TODO: (Design consideration) why bother storing the raw data in the object when it's just going to be parsed anyways?
 		/// <summary>
 		/// The segment bytes as they're read in from the city file.
 		/// </summary>

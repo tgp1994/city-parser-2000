@@ -8,7 +8,7 @@ namespace CityParser2000.Segments
 	/// If a byte of data has a value of (int)1 thru (int) 127, then the following x bytes are uncompressed.
 	/// If a byte of data has a value of (int)129 thru (int) 255, then the following byte is repeated 127 less times.
 	/// </summary>
-	class CompressedDataSegment : DataSegment
+	public class CompressedDataSegment : DataSegment
 	{
 		protected CompressedDataSegment(string s) : base(s) { }
 	

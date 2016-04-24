@@ -16,7 +16,6 @@ namespace CityParser2000
         /// </summary>
 		public string CityName 
 		{
-			// TODO: Test both getting and setting the city variable.
 			get { return ((Segments.CNAM)GetSegment("CNAM")).cityName; }
 			set { ((Segments.CNAM)GetSegment("CNAM")).cityName = value; } 
 		}
@@ -115,21 +114,17 @@ namespace CityParser2000
 				city.ParseHeader(reader); // Used for validation and sanity-checking before anything else is done.
 
 				// Begin walking through the file, handing off segment parsing to the appropriate parser.
-                string segmentName;
-                Int32 segmentLength;
+                //string segmentName;
+                //Int32 segmentLength;
                 while (reader.Position < reader.Length)
                 {
 					// TODO: Complete migration to new parser.
 					city.segments.Add(Segments.SegmentFactory.ParseSegment(reader));
                     // Parse segment data and store it in a City object. 
-                    segmentName = reader.ReadString();
-                    segmentLength = reader.Read4ByteInt();
+                    //segmentName = reader.ReadString();
+                    //segmentLength = reader.Read4ByteInt();
 
-                    /*if ("CNAM".Equals(segmentName))
-                    {
-                        // City name (uncompressed).
-                        city = parseCityName(city, reader, segmentLength);
-                    }
+                    /*
                     else if ("ALTM".Equals(segmentName))
                     {
                         // Altitude map. (Not compressed)
@@ -225,7 +220,7 @@ namespace CityParser2000
 		/// </summary>
 		/// <param name="type">The four letter segment type to be found.</param>
 		/// <returns></returns>
-		Segments.DataSegment GetSegment(string type)
+		public Segments.DataSegment GetSegment(string type)
 		{
 			foreach (Segments.DataSegment dseg in segments)
 			{

@@ -9,7 +9,7 @@ namespace CityParser2000.Segments
 	/// <summary>
 	/// This is just a 32 byte string representing the name of the city. This segment is also optional.
 	/// </summary>
-	class CNAM : DataSegment
+	public class CNAM : DataSegment
 	{
 		public string cityName;
 

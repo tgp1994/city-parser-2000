@@ -23,7 +23,22 @@ namespace CP2000UnitTester
 		[TestMethod]
 		public void CheckCityName()
 		{
-			Trace.WriteLine("City name from the City object is: " + city.CityName);
+			string cityName = city.CityName; // First try to get the city name
+			Trace.WriteLine("City name from the City object is: " + cityName);
+			city.CityName = "UnitTest"; // Now attempt to write to the city name
+			// Verify
+			CityParser2000.Segments.CNAM cnamSeg = (CityParser2000.Segments.CNAM)city.GetSegment("CNAM");
+			Assert.AreEqual("UnitTest", cnamSeg.cityName);
+			// Put the old city name back
+			city.CityName = cityName;
+		}
+
+		[TestMethod]
+		public void CheckMISC()
+		{
+			Trace.WriteLine("\n*MISC Segment*");
+			CityParser2000.Segments.MISC miscSeg = (CityParser2000.Segments.MISC)city.GetSegment("MISC");
+			Trace.WriteLine(miscSeg.ToString(true));
 		}
 	}
 }
