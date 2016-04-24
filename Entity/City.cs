@@ -35,8 +35,8 @@ namespace CityParser2000
 
         #region public constants
 		// A few constant header bytes.
-		static const string HEADERCHUNK = "FORM";
-		static const string FILETYPE = "SCDH";
+		const string HEADERCHUNK = "FORM";
+		const string FILETYPE = "SCDH";
 
         /// <summary>
         /// Enumerates underground structures.
@@ -225,7 +225,7 @@ namespace CityParser2000
 		/// </summary>
 		/// <param name="type">The four letter segment type to be found.</param>
 		/// <returns></returns>
-		public Segments.DataSegment GetSegment(string type)
+		Segments.DataSegment GetSegment(string type)
 		{
 			foreach (Segments.DataSegment dseg in segments)
 			{

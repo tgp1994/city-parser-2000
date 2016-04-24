@@ -13,8 +13,8 @@ namespace CP2000UnitTester
 		/// <summary>
 		/// Prepare the City object as part of a unit test and for future tests.
 		/// </summary>
-		[TestMethod]
-		public void UnitTest1()
+		[TestInitialize]
+		public void Initialize()
 		{
 			City city = City.ParseCityFile("E:\\Users\\Glen\\Desktop\\share\\blank.sc2");
 			Trace.Write("Data length came out to be " + city.DataLength);
