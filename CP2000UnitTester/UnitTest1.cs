@@ -13,9 +13,7 @@ namespace CP2000UnitTester
 		[TestMethod]
 		public void LetsDoThisThing()
 		{
-			CityParser parser = new CityParser();
-
-			City ourCity = parser.ParseBinaryFile("E:\\Users\\Glen\\Desktop\\share\\blank.sc2");
+			City city = City.ParseCityFile("E:\\Users\\Glen\\Desktop\\share\\blank.sc2");
 		}
 	}
 }

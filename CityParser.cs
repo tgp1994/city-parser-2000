@@ -84,119 +84,6 @@ namespace CityParser2000
 
         #region parsing and storage
 
-        /// <summary>
-        ///   Parses binary data from <paramref name="binaryFilename"/> and stores it in a <see cref="City"/> object.
-        /// </summary>
-        /// <param name="binaryFilename">Filepath to a .SC2 file.</param>
-        /// <returns>A <see cref="City"/> instance reflecting data from <paramref name="binaryFilename"/></returns>
-        public City ParseBinaryFile(string binaryFilename)
-        {
-            var city = new City();
-
-            using (BinaryReader reader = new BinaryReader(File.Open(binaryFilename, FileMode.Open)))
-            {
-                // Read 12-byte header. 
-                string iffType = readString(reader, 4);
-                reader.ReadBytes(4);
-                var fileType = readString(reader, 4);
-
-                if (!iffType.Equals("FORM") || !fileType.Equals("SCDH"))
-                {
-                    // This is not a Sim City 2000 file.
-                    throw new System.InvalidOperationException("Invalid input: Not a SC2000 file.");
-                }
-
-                // The rest of the file is divided into segments.
-                // Each segment begins with a 4-byte segment name, followed by a 32-bit integer segment length.
-                // Most segments are compressed using a simple run-length compression scheme, and must be 
-                //  decompressed before they can be parsed correctly.
-                string segmentName;
-                Int32 segmentLength;
-                while (reader.BaseStream.Position < reader.BaseStream.Length)
-                {
-                    // Parse segment data and store it in a City object. 
-                    segmentName = readString(reader, 4);
-                    segmentLength = readInt32(reader);
-
-                    if ("CNAM".Equals(segmentName))
-                    {
-                        // City name (uncompressed).
-                        city = parseCityName(city, reader, segmentLength);
-                    }
-                    else if ("MISC".Equals(segmentName))
-                    {
-                        // MISC contains a series of 32-bit integers.
-                        city = parseMiscValues(city, getDecompressedReader(reader, segmentLength));
-                    }
-                    else if ("ALTM".Equals(segmentName))
-                    {
-                        // Altitude map. (Not compressed)
-                        city = parseAltitudeMap(city, reader, segmentLength);
-                    }
-                    else if ("XTER".Equals(segmentName))
-                    {
-                        // Terrain slope map. 
-                        // Ignore for now. 
-                        reader.ReadBytes(segmentLength);   
-                    }
-                    else if ("XBLD".Equals(segmentName))
-                    {
-                        // Buildings map.
-                        city = parseBuildingMap(city, getDecompressedReader(reader, segmentLength));
-                    }
-                    else if ("XZON".Equals(segmentName))
-                    {
-                        // Zoning map (also specifies building corners).
-                        city = parseZoningMap(city, getDecompressedReader(reader, segmentLength));
-                    }
-                    else if ("XUND".Equals(segmentName))
-                    {
-                        // Underground structures map.
-                        city = parseUndergroundMap(city, getDecompressedReader(reader, segmentLength));  
-                    }
-                    else if ("XTXT".Equals(segmentName))
-                    {
-                        // Sign information, of some sort. 
-                        // Ignore for now. 
-                        reader.ReadBytes(segmentLength);
-                    }
-                    else if ("XLAB".Equals(segmentName)) 
-                    {
-                        // 256 Labels. Mayor's name, then sign text.
-                        city = parse256Labels(city, getDecompressedReader(reader, segmentLength));
-                    }
-                    else if ("XMIC".Equals(segmentName))
-                    {
-                        // Microcontroller info.
-                        // Ignore for now. 
-                        reader.ReadBytes(segmentLength);
-                    }
-                    else if ("XTHG".Equals(segmentName))
-                    {
-                        // Segment contents unknown.
-                        // Ignore for now. 
-                        reader.ReadBytes(segmentLength);
-                    }
-                    else if ("XBIT".Equals(segmentName))
-                    {
-                        // One byte of flags for each city tile.
-                        city = parseBinaryFlagMap(city, getDecompressedReader(reader, segmentLength));
-                    }
-                    else if (integerMaps.Contains(segmentName)) 
-                    {
-                        // Data in these segments are represented by integer values ONLY.
-                        city = parseIntegerMap(city, segmentName, getDecompressedReader(reader, segmentLength));
-                    }
-                    else
-                    {
-                        // Unknown segment, ignore.
-                        reader.ReadBytes(segmentLength);
-                    }
-                }
-            }
-            return city;
-        }
-
         #region complex city map parsers
 
         private City parseBinaryFlagMap(City city, BinaryReader segmentReader)
@@ -523,7 +410,7 @@ namespace CityParser2000
             return city;
         }
 
-        private City parseCityName(City city, BinaryReader reader, int segmentLength)
+        /*private City parseCityName(City city, BinaryReader reader, int segmentLength)
         {
             byte nameLength = reader.ReadByte();
             string cityName = readString(reader, nameLength);
@@ -541,25 +428,9 @@ namespace CityParser2000
 
             city.CityName = cityName;
             return city;
-        }
+        }*/
 
-        private City parseMiscValues(City city, BinaryReader segmentReader)
-        {
-            // The MISC segment contains ~1200 integer values.
-
-            // TODO: Still a lot of work to be done on this segment. Aka: we don't know what most of these numbers mean, and are just recording them.
-            Int32 miscValue;
-            while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
-            {
-                miscValue = readInt32(segmentReader);
-                city.AddMiscValue(miscValue);
-            }
-
-            segmentReader.Dispose();
-            return city;
-        }
-
-        private City parse256Labels(City city, BinaryReader segmentReader)
+        /*private City parse256Labels(City city, BinaryReader segmentReader)
         {
             // This segment describes 256 strings. String 0 is the mayor's name, the remaining are text from user-generated signs in the city.
  
@@ -594,7 +465,7 @@ namespace CityParser2000
 
             segmentReader.Dispose();
             return city;
-        }
+        }*/
 
         #endregion
 
@@ -642,12 +513,6 @@ namespace CityParser2000
         private BinaryReader getDecompressedReader(BinaryReader compressedReader, int compressedLength)
         {
             return new BinaryReader(decompressSegment(compressedReader, compressedLength));
-        }
-
-        private string readString(BinaryReader reader, int length)
-        {
-            byte[] buffer = reader.ReadBytes(length);
-            return Encoding.ASCII.GetString(buffer);
         }
 
         private Int16 readInt16(BinaryReader reader)

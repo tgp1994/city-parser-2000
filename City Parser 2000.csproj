@@ -46,6 +46,7 @@
     <Compile Include="Entity\Tile.cs" />
     <Compile Include="Segments\CompressedDataSegment.cs" />
     <Compile Include="Segments\MISC.cs" />
+    <Compile Include="Segments\SegmentFactory.cs" />
     <Compile Include="Utility\CityTileIterator.cs" />
     <Compile Include="Segments\DataSegment.cs" />
     <Compile Include="Utility\StreamUtils.cs" />

@@ -10,7 +10,7 @@ namespace CityParser2000.Segments
 	/// <summary>
 	/// Provide a generic guideline for Interchange File Format segments. Every segment has a type and positive length.
 	/// </summary>
-	abstract class DataSegment
+	class DataSegment
 	{
 		/// <summary>
 		/// An identifier of the segment, always four bytes (characters) long.

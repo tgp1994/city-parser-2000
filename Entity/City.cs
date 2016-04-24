@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace CityParser2000
 {
@@ -26,6 +24,9 @@ namespace CityParser2000
         #endregion
 
         #region public constants
+		// A few constant header bytes.
+		static const string HEADERCHUNK = "FORM";
+		static const string FILETYPE = "SCDH";
 
         /// <summary>
         /// Enumerates underground structures.
@@ -46,11 +47,11 @@ namespace CityParser2000
         #endregion
 
         #region local variables
+		List<Segments.DataSegment> segments = new List<Segments.DataSegment>();
+		int dataLength; // Length of the data contained within the file as determined by the header.
 
         private Tile[,] tiles = new Tile[TilesPerSide, TilesPerSide];
 
-        // Keep track of misc integer stats. (We don't know what all of them represent atm).
-        private List<int> miscValues = new List<int>(); // This one could be temporary.
         private Dictionary<string, int> miscStats = new Dictionary<string, int>();
 
         private List<int> policeMap;
@@ -89,9 +90,128 @@ namespace CityParser2000
 
         #endregion
 
-        #region setters
+		#region Parsing
+		/// <summary>
+		/// Parses binary data from <paramref name="binaryFilename"/> and stores it in a <see cref="City"/> object.
+		/// </summary>
+		/// <param name="binaryFilename">Filepath to a .SC2 file.</param>
+		/// <returns>A <see cref="City"/> instance reflecting data from <paramref name="binaryFilename"/></returns>
+		public static City ParseCityFile(string binaryFilename)
+        {
+            var city = new City();
 
-        /// <summary>
+            using (FileStream reader = File.Open(binaryFilename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+				city.ParseHeader(reader); // Used for validation and sanity-checking before anything else is done.
+
+				// Begin walking through the file, handing off segment parsing to the appropriate parser.
+                string segmentName;
+                Int32 segmentLength;
+                while (reader.Position < reader.Length)
+                {
+					// TODO: Complete migration to new parser.
+					city.segments.Add(Segments.SegmentFactory.ParseSegment(reader));
+                    // Parse segment data and store it in a City object. 
+                    segmentName = reader.ReadString();
+                    segmentLength = reader.Read4ByteInt();
+
+                    /*if ("CNAM".Equals(segmentName))
+                    {
+                        // City name (uncompressed).
+                        city = parseCityName(city, reader, segmentLength);
+                    }
+                    else if ("ALTM".Equals(segmentName))
+                    {
+                        // Altitude map. (Not compressed)
+                        city = parseAltitudeMap(city, reader, segmentLength);
+                    }
+                    else if ("XTER".Equals(segmentName))
+                    {
+                        // Terrain slope map. 
+                        // Ignore for now. 
+                        reader.ReadBytes(segmentLength);   
+                    }
+                    else if ("XBLD".Equals(segmentName))
+                    {
+                        // Buildings map.
+                        city = parseBuildingMap(city, getDecompressedReader(reader, segmentLength));
+                    }
+                    else if ("XZON".Equals(segmentName))
+                    {
+                        // Zoning map (also specifies building corners).
+                        city = parseZoningMap(city, getDecompressedReader(reader, segmentLength));
+                    }
+                    else if ("XUND".Equals(segmentName))
+                    {
+                        // Underground structures map.
+                        city = parseUndergroundMap(city, getDecompressedReader(reader, segmentLength));  
+                    }
+                    else if ("XTXT".Equals(segmentName))
+                    {
+                        // Sign information, of some sort. 
+                        // Ignore for now. 
+                        reader.ReadBytes(segmentLength);
+                    }
+                    else if ("XLAB".Equals(segmentName)) 
+                    {
+                        // 256 Labels. Mayor's name, then sign text.
+                        city = parse256Labels(city, getDecompressedReader(reader, segmentLength));
+                    }
+                    else if ("XMIC".Equals(segmentName))
+                    {
+                        // Microcontroller info.
+                        // Ignore for now. 
+                        reader.ReadBytes(segmentLength);
+                    }
+                    else if ("XTHG".Equals(segmentName))
+                    {
+                        // Segment contents unknown.
+                        // Ignore for now. 
+                        reader.ReadBytes(segmentLength);
+                    }
+                    else if ("XBIT".Equals(segmentName))
+                    {
+                        // One byte of flags for each city tile.
+                        city = parseBinaryFlagMap(city, getDecompressedReader(reader, segmentLength));
+                    }
+                    else if (integerMaps.Contains(segmentName)) 
+                    {
+                        // Data in these segments are represented by integer values ONLY.
+                        city = parseIntegerMap(city, segmentName, getDecompressedReader(reader, segmentLength));
+                    }
+					else
+					{
+						throw new Exception("Reached end of parse loop, unknown data block case should have been handled.")
+					}*/
+                }
+            }
+            return city;
+        }
+
+		/// <summary>
+		/// Read in and validate the header of a city file.
+		/// </summary>
+		/// <param name="stream">File stream waiting at the header for instructions.</param>
+		private void ParseHeader(FileStream reader)
+		{
+			// Case for too small of a file
+			if (reader.Length < 12)
+				throw new Exception("Unexpected file length.");
+
+			// Read 12-byte header.
+			string headChunk = reader.ReadString();
+			dataLength = reader.Read4ByteInt();
+			string fileType = reader.ReadString();
+
+			// Make sure the header represents a valid city file.
+			if (!headChunk.Equals(HEADERCHUNK) || !fileType.Equals(FILETYPE))
+				throw new Exception("Invalid SC2000 file or corrupted header.");
+		}
+		#endregion
+
+		#region setters
+
+		/// <summary>
         /// Set a series of boolean flags for the city tile at (<paramref name="x"/>, <paramref name="y"/>).
         /// </summary>
         /// <param name="x">Tile x-coordinate.</x></param>
@@ -308,16 +428,6 @@ namespace CityParser2000
         public void AddSignText(string signText)
         {
             signs.Add(signText);
-        }
-
-        // This method may be tempoarary, but is useful during testing.
-        /// <summary>
-        /// Record a "MISC" value (there are 1200 such values).
-        /// </summary>
-        /// <param name="value"></param>
-        public void AddMiscValue(int value)
-        {
-            miscValues.Add(value);
         }
 
         #endregion // setters
