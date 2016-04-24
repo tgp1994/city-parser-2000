@@ -25,7 +25,7 @@ namespace CityParser2000.Segments
 		public int SeaLevel { get { return Data[912]; } }
 		#endregion
 
-		internal override void ParseSection(FileStream file)
+		internal override void ParseSegment(FileStream file)
 		{
 			base.ParseSegment(file);
 

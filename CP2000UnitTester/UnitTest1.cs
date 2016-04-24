@@ -16,7 +16,7 @@ namespace CP2000UnitTester
 		[TestInitialize]
 		public void Initialize()
 		{
-			City city = City.ParseCityFile("E:\\Users\\Glen\\Desktop\\share\\blank.sc2");
+			city = City.ParseCityFile("E:\\Users\\Glen\\Desktop\\share\\blank.sc2");
 			Trace.Write("Data length came out to be " + city.DataLength);
 		}
 		

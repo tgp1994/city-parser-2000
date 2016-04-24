@@ -49,7 +49,7 @@ namespace CityParser2000.Segments
 		/// in, so the position is at the four byte length int.
 		/// </summary>
 		/// <param name="file">The city file that is being read in.</param>
-		internal void ParseSegment(FileStream file)
+		internal virtual void ParseSegment(FileStream file)
 		{
 			Length = file.Read4ByteInt();
 			RawDataFileOffset = (int)file.Position;
