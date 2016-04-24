@@ -14,12 +14,22 @@ namespace CityParser2000
         /// <summary>
         /// The city's name.
         /// </summary>
-        public string CityName { get; set; }
+		public string CityName 
+		{
+			// TODO: Test both getting and setting the city variable.
+			get { return ((Segments.CNAM)GetSegment("CNAM")).cityName; }
+			set { ((Segments.CNAM)GetSegment("CNAM")).cityName = value; } 
+		}
 
         /// <summary>
         /// The mayor of the city.
         /// </summary>
         public string MayorName { get; set; }
+
+		/// <summary>
+		/// The length of the save file as determined from the 4 byte value in the header.
+		/// </summary>
+		public int DataLength { get { return dataLength; } }
 
         #endregion
 
@@ -48,7 +58,7 @@ namespace CityParser2000
 
         #region local variables
 		List<Segments.DataSegment> segments = new List<Segments.DataSegment>();
-		int dataLength; // Length of the data contained within the file as determined by the header.
+		int dataLength;
 
         private Tile[,] tiles = new Tile[TilesPerSide, TilesPerSide];
 
@@ -209,7 +219,22 @@ namespace CityParser2000
 		}
 		#endregion
 
-		#region setters
+		#region Getters and Setters
+		/// <summary>
+		/// Find a DataSegment object from within the segments List.
+		/// </summary>
+		/// <param name="type">The four letter segment type to be found.</param>
+		/// <returns></returns>
+		public Segments.DataSegment GetSegment(string type)
+		{
+			foreach (Segments.DataSegment dseg in segments)
+			{
+				if (type.Equals(dseg.Type))
+					return dseg;
+			}
+
+			throw new Exception("Segment " + type + " was not found.");
+		}
 
 		/// <summary>
         /// Set a series of boolean flags for the city tile at (<paramref name="x"/>, <paramref name="y"/>).

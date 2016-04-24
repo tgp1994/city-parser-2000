@@ -24,7 +24,7 @@ namespace CityParser2000.Segments
 					break;
 			}
 
-			newSeg.ParseData(stream);
+			newSeg.ParseSegment(stream);
 			return newSeg;
 		}
 	}

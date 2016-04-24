@@ -12,7 +12,7 @@ namespace CityParser2000.Segments
 	{
 		protected CompressedDataSegment(string s) : base(s) { }
 	
-		internal override void ParseSection(System.IO.FileStream file)
+		internal override void ParseSegment(System.IO.FileStream file)
 		{
 			Length = file.Read4ByteInt();
 			RawDataFileOffset = (int)file.Position;

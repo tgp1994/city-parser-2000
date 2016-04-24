@@ -27,7 +27,7 @@ namespace CityParser2000.Segments
 
 		internal override void ParseSection(FileStream file)
 		{
-			base.ParseSection(file);
+			base.ParseSegment(file);
 
 			// RawData now has the uncompressed bytes, lets get them.
 			using (MemoryStream ms = new MemoryStream(RawData))
