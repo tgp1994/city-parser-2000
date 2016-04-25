@@ -40,10 +40,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CityMap.cs" />
     <Compile Include="CityParser.cs" />
     <Compile Include="Entity\Building.cs" />
     <Compile Include="Entity\City.cs" />
     <Compile Include="Entity\Tile.cs" />
+    <Compile Include="Segments\ALTM.cs" />
     <Compile Include="Segments\CNAM.cs" />
     <Compile Include="Segments\CompressedDataSegment.cs" />
     <Compile Include="Segments\MISC.cs" />

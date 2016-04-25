@@ -47,21 +47,12 @@ namespace CityParser2000
         /// </summary>
         public enum Zone { LightResidential, DenseResidential, LightCommercial, DenseCommercial, LightIndustrial, DenseIndustrial, MilitaryBase, Airport, Seaport };
 
-        /// <summary>
-        /// <para>Indicates the number of city tiles along each edge of the city.</para>
-        /// <para>Cities are always square.</para>
-        /// </summary>
-        public const int TilesPerSide = 128;
-
         #endregion
 
         #region local variables
 		List<Segments.DataSegment> segments = new List<Segments.DataSegment>();
 		int dataLength;
-
-        private Tile[,] tiles = new Tile[TilesPerSide, TilesPerSide];
-
-        private Dictionary<string, int> miscStats = new Dictionary<string, int>();
+		CityMap map;
 
         private List<int> policeMap;
         private List<int> firefigherMap;
@@ -78,23 +69,9 @@ namespace CityParser2000
 
         #region constructors and initialization
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public City()
         {
-            initializeTiles();
-        }
-
-        private void initializeTiles()
-        {
-            for (int i = 0; i < TilesPerSide; i++)
-            {
-                for (int j = 0; j < TilesPerSide; j++)
-                {
-                    tiles[i, j] = new Tile();
-                }
-            }
+			map = new CityMap(); // Get the city tiles initialized.
         }
 
         #endregion
@@ -244,12 +221,12 @@ namespace CityParser2000
         /// <param name="isConductive">True if this tile can conduct electricity.</param>
         public void SetTileFlags(int x, int y, bool isSalty, bool isWaterCovered, bool isWaterSupplied, bool isPiped, bool isPowered, bool isConductive) 
         {
-            tiles[x, y].IsSalty = isSalty;
+            /*tiles[x, y].IsSalty = isSalty;
             tiles[x, y].IsWaterCovered = isWaterCovered;
             tiles[x, y].IsWaterSupplied = isWaterSupplied;
             tiles[x, y].IsPiped = isPiped;
             tiles[x, y].IsPowered = isPowered;
-            tiles[x, y].IsConductive = isConductive;
+            tiles[x, y].IsConductive = isConductive;*/
         }
 
         /// <summary>
@@ -260,7 +237,7 @@ namespace CityParser2000
         /// <param name="undergroundItem">Underground structure code (pipe, subway, etc).</param>
         public void SetUndergroundItem(int x, int y, UndergroundItem undergroundItem)
         {
-            switch (undergroundItem) 
+            /*switch (undergroundItem) 
             {
                 case UndergroundItem.Pipe:
                     tiles[x, y].HasPipe = true;
@@ -278,7 +255,7 @@ namespace CityParser2000
                 case UndergroundItem.Tunnel:
                     tiles[x, y].HasTunnel = true;
                     return;
-            }
+            }*/
         }
 
         /// <summary>
@@ -289,7 +266,7 @@ namespace CityParser2000
         /// <param name="zone">Zone code (residential, commercial, etc).</param>
         public void SetZone(int x, int y, Zone zone)
         {
-            switch (zone)
+            /*switch (zone)
             {
                 case Zone.LightResidential:
                     tiles[x, y].IsLightResidential = true;
@@ -318,7 +295,7 @@ namespace CityParser2000
                 case Zone.MilitaryBase:
                     tiles[x, y].IsMilitaryBase = true;
                     return;
-            }
+            }*/
         }
 
         /// <summary>
@@ -329,7 +306,7 @@ namespace CityParser2000
         /// <param name="buildingCode"></param>
         public void SetBuilding(int x, int y, Building.BuildingCode buildingCode)
         {
-            tiles[x, y].SetBuilding(buildingCode);
+            //tiles[x, y].SetBuilding(buildingCode);
         }
 
 
@@ -341,7 +318,7 @@ namespace CityParser2000
         /// <param name="cornerCode">Indicates which corner of the tile is the building corner.</param>
         public void SetBuildingCorner(int x, int y, Building.CornerCode cornerCode)
         {
-            switch (cornerCode)
+            /*switch (cornerCode)
             {
                 case Building.CornerCode.BottomRight:
                     tiles[x, y].HasBuildingCornerBottomRight = true;
@@ -355,7 +332,7 @@ namespace CityParser2000
                 case Building.CornerCode.TopRight:
                     tiles[x, y].HasBuildingCornerTopRight = true;
                     return;
-            }
+            }*/
         }
 
         /// <summary>
@@ -366,7 +343,7 @@ namespace CityParser2000
         /// <param name="altitude">Altitude in meters.</param>
         public void SetAltitude(int x, int y, int altitude)
         {
-            tiles[x, y].Altitude = altitude;
+            //tiles[x, y].Altitude = altitude;
         }
 
         /// <summary>

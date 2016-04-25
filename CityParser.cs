@@ -71,7 +71,7 @@ namespace CityParser2000
         /// </summary>
         public CityParser () 
         {
-            tileIterator = new Utility.CityTileIterator(City.TilesPerSide);
+            //tileIterator = new Utility.CityTileIterator(City.TilesPerSide);
         }
 
         #endregion
@@ -409,26 +409,6 @@ namespace CityParser2000
 
             return city;
         }
-
-        /*private City parseCityName(City city, BinaryReader reader, int segmentLength)
-        {
-            byte nameLength = reader.ReadByte();
-            string cityName = readString(reader, nameLength);
-
-            // Remove garbage characters that are at the end of the name.
-            int gibbrishStart = cityName.IndexOf("\0");
-            cityName = cityName.Remove(gibbrishStart);
-
-            // City name is possibly padded. Ignore this padding.
-            // NOTE: I yet to see a case where there actually is padding. I believe this is unrelated to the gibberish removal above, but I could be wrong.
-            if (nameLength < segmentLength - 1)
-            {
-                reader.ReadBytes(segmentLength - nameLength - 1);
-            }
-
-            city.CityName = cityName;
-            return city;
-        }*/
 
         /*private City parse256Labels(City city, BinaryReader segmentReader)
         {

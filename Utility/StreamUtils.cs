@@ -21,6 +21,15 @@ namespace CityParser2000
 			}
 		}
 
+		public static int Read2ByteInt(this Stream stream)
+		{
+			byte[] buf = new byte[2];
+			stream.Read(buf, 0, 2);
+			CorrectEndianness(ref buf);
+
+			return BitConverter.ToInt16(buf, 0);
+		}
+
 		/// <summary>
 		/// An extension method to read in 4 bytes as a 32 bit integer.
 		/// </summary>
