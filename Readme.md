@@ -1,24 +1,20 @@
 ﻿City Parser 2000
 ================
-#### General purpose version
-### By Dustin Fennell
-
 ****
 
 ## Overview
-
-City Parser 2000 is a simple C# program which represents some of the data from binary Sim City 2000&copy; files (.SC2 file format) as C# objects. 
-
-This is part of a larger project I am working on which will facilitate custom comparisons of simulated cities using C# ASP.net. 
+City Parser 2000 is a simple C# library which interprets and represents data from binary Sim City 2000&copy; files (.SC2 file format) as C# objects. 
 
 ## Current Status
-
-The current version of the parser is stable with almost all binary data represented in the City object.
-It is not fully-polished by any means. As noted below, I would like to do some restructuring so that this can be used as a general-purpose command line application, but for now my focus is on another branch.
+This project is going through an overhaul at the moment, to create a more modular and efficient codebase.
 
 ## Future Development
+- Further the already extensive amount of research into the SC2 format, especially where the MISC segment is concerned.
+- Interpret more of the SC2 file.
+- Accept generic data inputs instead of just a local file.
 
-- Interpret more of the SC2 file, particularly the MISC segment.
-- ParseBinaryFile will likely take a more complex data structure as input (as opposed to a local filepath). 
-- Modifications for greater command line ease-of-use (city filepath input, City object 'ToString()' output).
-- Creation of a light-weight version for use in a web application.
+##Credits
+- [David Moews](http://djm.cc/simcity-2000-info.txt), without his extensive research, this project would not have been possible.
+- [Dustin Fennell](https://github.com/dwfennell/city-parser-2000), for his work on initially creating this project and getting most of the framework done.
+- [nattress](https://github.com/nattress/simcity-minecraft), for their work on the Simcity-Minecraft project from which a lot of code and design has been referenced.
+- The great community of [XeNTaX](http://wiki.xentax.com/index.php?title=Simcity_2000_Special_Edition), for providing a wiki to gather my research on the SC2 file.
