@@ -6,11 +6,11 @@ using System.Text;
 
 namespace CityParser2000.Segments
 {
-	class ALTM : DataSegment
+	public class ALTM : DataSegment
 	{
 		public AltitudeDescriptor[,] AltitudeData { get; set; }
 
-		internal ALTM() : base("ALTM")
+		public ALTM() : base("ALTM")
 		{
 			AltitudeData = new AltitudeDescriptor[CityMap.TILES_PER_SIDE, CityMap.TILES_PER_SIDE];
 		}
@@ -31,18 +31,36 @@ namespace CityParser2000.Segments
 			}
 		}
 
+		/// <summary>
+		/// Default method that prints every tile contained in the AltitudeData array.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
+			return ToString(0, 127, 0, 127);
+		}
+
+		/// <summary>
+		/// Prints out information about the specified range of tiles.
+		/// </summary>
+		/// <returns></returns>
+		public string ToString(int x_min, int x_max, int y_min, int y_max)
+		{
 			StringBuilder sb = new StringBuilder();
+			AltitudeDescriptor ad;
 			sb.Append(base.ToString());
 
-			for (int i = 0; i < 128; i++)
+			for (int i = x_min; i <= x_max; i++)
 			{
-				for (int j = 0; j < 128; j++)
+				for (int j = y_min; j <= y_max; j++)
 				{
-					AltitudeDescriptor ad = AltitudeData[i, j];
-					sb.AppendFormat("[{0}, {1}]\t{2}", i, j, ad.ToString());
+					ad = AltitudeData[i, j];
+					if (j % 6 == 0)
+						sb.AppendLine();
+					// Catch the case where the data is not filled yet.
+					sb.AppendFormat("[{0}, {1}]\t{2}\t", i, j, (ad != null ? ad.ToString() : "Null\t\t"));
 				}
+				sb.AppendLine();
 			}
 
 			return sb.ToString();
@@ -85,7 +103,7 @@ namespace CityParser2000.Segments
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("Height: {D:0}\tWater: {1}", Altitude, WaterCovered.ToString());
+			sb.AppendFormat("Height: {0:D}ft. Water: " + WaterCovered.ToString(), (Altitude * 100) + 50);
 			return sb.ToString();
 		}
 	}

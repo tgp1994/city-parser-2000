@@ -40,5 +40,13 @@ namespace CP2000UnitTester
 			CityParser2000.Segments.MISC miscSeg = (CityParser2000.Segments.MISC)city.GetSegment("MISC");
 			Trace.WriteLine(miscSeg.ToString(true));
 		}
+
+		[TestMethod]
+		public void CheckALTM()
+		{
+			Trace.WriteLine("\n*ALTM Segment*");
+			CityParser2000.Segments.ALTM altmSeg = (CityParser2000.Segments.ALTM)city.GetSegment("ALTM");
+			Trace.WriteLine(altmSeg.ToString(0, 4, 0, 10));
+		}
 	}
 }

@@ -12,8 +12,9 @@ namespace CityParser2000.Segments
 		{
 			DataSegment newSeg;
 			string segmentName = stream.ReadString();
-
-			switch (segmentName)
+			//For the sake of modularity, create the instance from the string.
+			newSeg = (DataSegment)System.Reflection.Assembly.GetExecutingAssembly().CreateInstance("CityParser2000.Segments." + segmentName);
+			/*switch (segmentName)
 			{
 				case "CNAM":
 					newSeg = new CNAM();
@@ -21,10 +22,19 @@ namespace CityParser2000.Segments
 				case "MISC":
 					newSeg = new MISC();
 					break;
+				case "ALTM":
+					newSeg = new ALTM();
+					break;
 				default:
 					Debug.WriteLine("WARNING: Parsing segment as generic:");
 					newSeg = new DataSegment(segmentName);
 					break;
+			}*/
+
+			if (newSeg == null)
+			{
+				Debug.WriteLine("WARNING: Parsing segment as generic:");
+				newSeg = new DataSegment(segmentName);
 			}
 
 			newSeg.ParseSegment(stream);
