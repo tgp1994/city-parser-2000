@@ -84,280 +84,118 @@ namespace CityParser2000
 
         #region parsing and storage
 
-        #region complex city map parsers
+		/// <summary>
+		/// Parses binary data from <paramref name="binaryFilename"/> and stores it in a <see cref="City"/> object.
+		/// </summary>
+		/// <param name="binaryFilename">Filepath to a .SC2 file.</param>
+		/// <returns>A <see cref="City"/> instance reflecting data from <paramref name="binaryFilename"/></returns>
+		public static City ParseCityFile(string binaryFilename)
+		{
+			var city = new City();
 
-        private City parseBinaryFlagMap(City city, BinaryReader segmentReader)
-        {
-            // Parse XBIT segment. 
-            // XBIT contains one byte of binary flags for each city tile.
-            //
-            // The flags for each bit are:
-            // 0: Salt water. (If true and this tile has water it will be salt water)
-            // 1: (unknown)
-            // 2: Water covered.
-            // 3: (unknown)
-            // 4: Supplied with water from city water-system.
-            // 5: Conveys water-system water. (Building and pipes convey water)
-            // 6: Has electricty.
-            // 7: Conducts electricity.
+			using (FileStream reader = File.Open(binaryFilename, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				city.ParseHeader(reader); // Used for validation and sanity-checking before anything else is done.
 
-            bool saltyFlag;
-            bool waterCoveredFlag;
-            bool waterSuppliedFlag;
-            bool pipedFlag;
-            bool poweredFlag;
-            bool conductiveFlag;
+				// Begin walking through the file, handing off segment parsing to the appropriate parser.
+				//string segmentName;
+				//Int32 segmentLength;
+				while (reader.Position < reader.Length)
+				{
+					// TODO: Complete migration to new parser.
+					city.segments.Add(Segments.SegmentFactory.ParseSegment(reader));
+					// Parse segment data and store it in a City object. 
+					//segmentName = reader.ReadString();
+					//segmentLength = reader.Read4ByteInt();
 
-            // These will be used to set the bool flags.
-            const byte saltyMask = 1;
-            // Unknown flag in 1 << 1 position.
-            const byte waterCoveredMask = 1 << 2;
-            // Unknown flag in 1 << 3 position.
-            const byte waterSuppliedMask = 1 << 4;
-            const byte pipedMask = 1 << 5;
-            const byte poweredMask = 1 << 6;
-            const byte conductiveMask = 1 << 7;
-            byte tileByte;
+					/*
+					else if ("ALTM".Equals(segmentName))
+					{
+						// Altitude map. (Not compressed)
+						city = parseAltitudeMap(city, reader, segmentLength);
+					}
+					else if ("XTER".Equals(segmentName))
+					{
+						// Terrain slope map. 
+						// Ignore for now. 
+						reader.ReadBytes(segmentLength);   
+					}
+					else if ("XBLD".Equals(segmentName))
+					{
+						// Buildings map.
+						city = parseBuildingMap(city, getDecompressedReader(reader, segmentLength));
+					}
+					else if ("XZON".Equals(segmentName))
+					{
+						// Zoning map (also specifies building corners).
+						city = parseZoningMap(city, getDecompressedReader(reader, segmentLength));
+					}
+					else if ("XUND".Equals(segmentName))
+					{
+						// Underground structures map.
+						city = parseUndergroundMap(city, getDecompressedReader(reader, segmentLength));  
+					}
+					else if ("XTXT".Equals(segmentName))
+					{
+						// Sign information, of some sort. 
+						// Ignore for now. 
+						reader.ReadBytes(segmentLength);
+					}
+					else if ("XLAB".Equals(segmentName)) 
+					{
+						// 256 Labels. Mayor's name, then sign text.
+						city = parse256Labels(city, getDecompressedReader(reader, segmentLength));
+					}
+					else if ("XMIC".Equals(segmentName))
+					{
+						// Microcontroller info.
+						// Ignore for now. 
+						reader.ReadBytes(segmentLength);
+					}
+					else if ("XTHG".Equals(segmentName))
+					{
+						// Segment contents unknown.
+						// Ignore for now. 
+						reader.ReadBytes(segmentLength);
+					}
+					else if ("XBIT".Equals(segmentName))
+					{
+						// One byte of flags for each city tile.
+						city = parseBinaryFlagMap(city, getDecompressedReader(reader, segmentLength));
+					}
+					else if (integerMaps.Contains(segmentName)) 
+					{
+						// Data in these segments are represented by integer values ONLY.
+						city = parseIntegerMap(city, segmentName, getDecompressedReader(reader, segmentLength));
+					}
+					else
+					{
+						throw new Exception("Reached end of parse loop, unknown data block case should have been handled.")
+					}*/
+				}
+			}
+			return city;
+		}
 
-            tileIterator.Reset();
-            while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
-            {
-                // TODO: Possible bug. Test data "new city.sc2" does not seem to be decompressing this segment correctly.
-                tileByte = segmentReader.ReadByte();
+		/// <summary>
+		/// Read in and validate the header of a city file.
+		/// </summary>
+		/// <param name="stream">File stream waiting at the header for instructions.</param>
+		private void ParseHeader(FileStream reader)
+		{
+			// Case for too small of a file
+			if (reader.Length < 12)
+				throw new Exception("Unexpected file length.");
 
-                saltyFlag = (tileByte & saltyMask) != 0;
-                waterCoveredFlag = (tileByte & waterCoveredMask) != 0;
-                waterSuppliedFlag = (tileByte & waterSuppliedMask) != 0;
-                pipedFlag = (tileByte & pipedMask) != 0;
-                poweredFlag = (tileByte & poweredMask) != 0;
-                conductiveFlag = (tileByte & conductiveMask) != 0;
+			// Read 12-byte header.
+			string headChunk = reader.ReadString();
+			dataLength = reader.Read4ByteInt();
+			string fileType = reader.ReadString();
 
-                city.SetTileFlags(tileIterator.X, tileIterator.Y, saltyFlag, waterCoveredFlag, waterSuppliedFlag, pipedFlag, poweredFlag, conductiveFlag);
-
-                tileIterator.IncrementCurrentTile();
-            }
-
-            segmentReader.Dispose();
-            return city;
-        }
-
-        private City parseUndergroundMap(City city, BinaryReader segmentReader)
-        {
-            // Parse XUND segment.
-            // This segment indicates what exists underground in each tile, given by a one-byte integer code.
-
-            undergroundCode tileCode;
-            tileIterator.Reset();
-
-            while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
-            {
-                tileCode = (undergroundCode) segmentReader.ReadByte();
-
-                switch (tileCode)
-                {
-                    case undergroundCode.nothing:
-                        // This tile doesn't have anything under the ground.
-                        break;
-                    case undergroundCode.pipeAndSubway1:
-                    case undergroundCode.pipeAndSubway2:
-                        city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.SubwayAndPipe);
-                        break;
-                    case undergroundCode.subwayStationOrSubRail:
-                        city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.SubwayStation);
-                        break;
-                    case undergroundCode.tunnel1:
-                    case undergroundCode.tunnel2:
-                        // NOTE: These codes appear to have not been used... nor does there appear to be any underground code at all for tunnels. 
-                        //  Perhaps these codes were meant to be tunnels but were never implemented as such, or possibly these codes indicate some other non-tunnel underground object.
-                        // TODO: Log if we ever get here? 
-                        city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.Tunnel);
-                        break;
-                    case undergroundCode.subway1:
-                    case undergroundCode.subway2:
-                    case undergroundCode.subway3:
-                    case undergroundCode.subway4:
-                    case undergroundCode.subway5:
-                    case undergroundCode.subway6:
-                    case undergroundCode.subway7:
-                    case undergroundCode.subway8:
-                    case undergroundCode.subway9:
-                    case undergroundCode.subwayA:
-                    case undergroundCode.subwayB:
-                    case undergroundCode.subwayC:
-                    case undergroundCode.subwayD:
-                    case undergroundCode.subwayE:
-                    case undergroundCode.subwayF:
-                        city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.Subway);
-                        break;
-                    case undergroundCode.pipe1:
-                    case undergroundCode.pipe2:
-                    case undergroundCode.pipe3:
-                    case undergroundCode.pipe4:
-                    case undergroundCode.pipe5:
-                    case undergroundCode.pipe6:
-                    case undergroundCode.pipe7:
-                    case undergroundCode.pipe8:
-                    case undergroundCode.pipe9:
-                    case undergroundCode.pipeA:
-                    case undergroundCode.pipeB:
-                    case undergroundCode.pipeC:
-                    case undergroundCode.pipeD:
-                    case undergroundCode.pipeE:
-                    case undergroundCode.pipeF:
-                        city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.Pipe);
-                        break;
-                    default:
-                        // Note: Hex codes over 0x23 are likely unused, but if they are used we would end up here.
-                        break;
-                }
-
-                tileIterator.IncrementCurrentTile();
-            }
-
-            segmentReader.Dispose();
-            return city;
-        }
-
-        private City parseZoningMap(City city, BinaryReader segmentReader)
-        {
-            // Parse zoning and "building corner" information.
-
-            // b00001111. The zone information is encoded in bits 0-3
-            byte zoneMask = 15;
-            // b0001000. Set if building has a corner in the 'top right'.
-            byte cornerMask1 = 16;
-            // b00100000. Set if building has a corner in the 'bottom right'.
-            byte cornerMask2 = 32;
-            // b01000000. Set if building has a corner in the 'bottom left'.
-            byte cornerMask3 = 64;
-            // b10000000. Set if building has a corner in the 'top left'.
-            byte cornerMask4 = 128;
-            zoneCode tileZoneCode;
-
-            tileIterator.Reset();
-            byte rawByte;
-
-            while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
-            {
-                rawByte = segmentReader.ReadByte();
-
-                // A little bit-wise arithmetic to extract our 4-bit zone code.
-                tileZoneCode = (zoneCode) (rawByte & zoneMask);
-
-                switch (tileZoneCode)
-                {
-                    case zoneCode.lightResidential:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.LightResidential);
-                        break;
-                    case zoneCode.denseResidential:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.DenseResidential);
-                        break;
-                    case zoneCode.lightCommercial:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.LightCommercial);
-                        break;
-                    case zoneCode.denseCommercial:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.DenseCommercial);
-                        break;
-                    case zoneCode.lightIndustrial:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.LightIndustrial);
-                        break;
-                    case zoneCode.denseIndustrial:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.DenseIndustrial);
-                        break;
-                    case zoneCode.military:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.MilitaryBase);
-                        break;
-                    case zoneCode.airport:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.Airport);
-                        break;
-                    case zoneCode.seaport:
-                        city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.Seaport);
-                        break;
-                }
-
-                if (hasCorner(rawByte, cornerMask1))
-                {
-                    city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.TopRight);
-                }
-                if (hasCorner(rawByte, cornerMask2))
-                {
-                    city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.BottomRight);
-                }
-                if (hasCorner(rawByte, cornerMask3))
-                {
-                    city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.BottomLeft);
-                }
-                if (hasCorner(rawByte, cornerMask4))
-                {
-                    city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.TopLeft);
-                }
-
-                tileIterator.IncrementCurrentTile();
-            }
-
-            segmentReader.Dispose();
-            return city;
-        }
-
-        private bool hasCorner(byte b, byte cornerMask) 
-        {
-            return (b & cornerMask) == (byte) 1;
-        }
-
-        private City parseBuildingMap(City city, BinaryReader segmentReader)
-        {
-            // This segment indicates what is above ground in each square.
-
-            // TODO: Shouldn't be relying on "Building.BuildingCode" order like this. BAD.
-            tileIterator.Reset();
-            byte rawByte;
-            Building.BuildingCode buildingCode;
-            
-            while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
-            {
-                // This map contains on 'building code' for each square. 
-                // The building code is a one-byte integer value.
-                rawByte = segmentReader.ReadByte();
-                buildingCode = (Building.BuildingCode) rawByte;
-                city.SetBuilding(tileIterator.X, tileIterator.Y, buildingCode);
-
-                tileIterator.IncrementCurrentTile();
-            }
-
-            segmentReader.Dispose();
-            return city;
-        }
-
-        private City parseAltitudeMap(City city, BinaryReader reader, int segmentLength)
-        {
-            // Altitude map.
-            // This segment is NOT compressed. 
-            // Each square gets two bytes.
-
-            byte byteOne;
-            byte byteTwo;
-            int altitude;
-            // b00011111. Altitude is stored in bits 0-4.
-            byte altitudeMask = 31;
-
-            tileIterator.Reset();
-            long readerStopPosition = reader.BaseStream.Position + segmentLength;
-            while (reader.BaseStream.Position < readerStopPosition)
-            {
-                // Don't do anything with the first byte (at least for now).
-                byteOne = reader.ReadByte();
-                byteTwo = reader.ReadByte();
-
-                // In SC2000 the minimum altitude is 50 and the maximum is 3150, thus the 50's below.
-                altitude = ((altitudeMask & byteTwo) * 50) + 50;
-                city.SetAltitude(tileIterator.X, tileIterator.Y, altitude);
-
-                tileIterator.IncrementCurrentTile();
-            }
-            return city;
-        }
-
-        #endregion
+			// Make sure the header represents a valid city file.
+			if (!headChunk.Equals(HEADERCHUNK) || !fileType.Equals(FILETYPE))
+				throw new Exception("Invalid SC2000 file or corrupted header.");
+		}
 
         private City parseIntegerMap(City city, string segmentName, BinaryReader segmentReader)
         {
@@ -448,6 +286,281 @@ namespace CityParser2000
         }*/
 
         #endregion
+
+		#region complex city map parsers
+
+		private City parseBinaryFlagMap(City city, BinaryReader segmentReader)
+		{
+			// Parse XBIT segment. 
+			// XBIT contains one byte of binary flags for each city tile.
+			//
+			// The flags for each bit are:
+			// 0: Salt water. (If true and this tile has water it will be salt water)
+			// 1: (unknown)
+			// 2: Water covered.
+			// 3: (unknown)
+			// 4: Supplied with water from city water-system.
+			// 5: Conveys water-system water. (Building and pipes convey water)
+			// 6: Has electricty.
+			// 7: Conducts electricity.
+
+			bool saltyFlag;
+			bool waterCoveredFlag;
+			bool waterSuppliedFlag;
+			bool pipedFlag;
+			bool poweredFlag;
+			bool conductiveFlag;
+
+			// These will be used to set the bool flags.
+			const byte saltyMask = 1;
+			// Unknown flag in 1 << 1 position.
+			const byte waterCoveredMask = 1 << 2;
+			// Unknown flag in 1 << 3 position.
+			const byte waterSuppliedMask = 1 << 4;
+			const byte pipedMask = 1 << 5;
+			const byte poweredMask = 1 << 6;
+			const byte conductiveMask = 1 << 7;
+			byte tileByte;
+
+			tileIterator.Reset();
+			while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
+			{
+				// TODO: Possible bug. Test data "new city.sc2" does not seem to be decompressing this segment correctly.
+				tileByte = segmentReader.ReadByte();
+
+				saltyFlag = (tileByte & saltyMask) != 0;
+				waterCoveredFlag = (tileByte & waterCoveredMask) != 0;
+				waterSuppliedFlag = (tileByte & waterSuppliedMask) != 0;
+				pipedFlag = (tileByte & pipedMask) != 0;
+				poweredFlag = (tileByte & poweredMask) != 0;
+				conductiveFlag = (tileByte & conductiveMask) != 0;
+
+				city.SetTileFlags(tileIterator.X, tileIterator.Y, saltyFlag, waterCoveredFlag, waterSuppliedFlag, pipedFlag, poweredFlag, conductiveFlag);
+
+				tileIterator.IncrementCurrentTile();
+			}
+
+			segmentReader.Dispose();
+			return city;
+		}
+
+		private City parseUndergroundMap(City city, BinaryReader segmentReader)
+		{
+			// Parse XUND segment.
+			// This segment indicates what exists underground in each tile, given by a one-byte integer code.
+
+			undergroundCode tileCode;
+			tileIterator.Reset();
+
+			while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
+			{
+				tileCode = (undergroundCode)segmentReader.ReadByte();
+
+				switch (tileCode)
+				{
+					case undergroundCode.nothing:
+						// This tile doesn't have anything under the ground.
+						break;
+					case undergroundCode.pipeAndSubway1:
+					case undergroundCode.pipeAndSubway2:
+						city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.SubwayAndPipe);
+						break;
+					case undergroundCode.subwayStationOrSubRail:
+						city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.SubwayStation);
+						break;
+					case undergroundCode.tunnel1:
+					case undergroundCode.tunnel2:
+						// NOTE: These codes appear to have not been used... nor does there appear to be any underground code at all for tunnels. 
+						//  Perhaps these codes were meant to be tunnels but were never implemented as such, or possibly these codes indicate some other non-tunnel underground object.
+						// TODO: Log if we ever get here? 
+						city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.Tunnel);
+						break;
+					case undergroundCode.subway1:
+					case undergroundCode.subway2:
+					case undergroundCode.subway3:
+					case undergroundCode.subway4:
+					case undergroundCode.subway5:
+					case undergroundCode.subway6:
+					case undergroundCode.subway7:
+					case undergroundCode.subway8:
+					case undergroundCode.subway9:
+					case undergroundCode.subwayA:
+					case undergroundCode.subwayB:
+					case undergroundCode.subwayC:
+					case undergroundCode.subwayD:
+					case undergroundCode.subwayE:
+					case undergroundCode.subwayF:
+						city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.Subway);
+						break;
+					case undergroundCode.pipe1:
+					case undergroundCode.pipe2:
+					case undergroundCode.pipe3:
+					case undergroundCode.pipe4:
+					case undergroundCode.pipe5:
+					case undergroundCode.pipe6:
+					case undergroundCode.pipe7:
+					case undergroundCode.pipe8:
+					case undergroundCode.pipe9:
+					case undergroundCode.pipeA:
+					case undergroundCode.pipeB:
+					case undergroundCode.pipeC:
+					case undergroundCode.pipeD:
+					case undergroundCode.pipeE:
+					case undergroundCode.pipeF:
+						city.SetUndergroundItem(tileIterator.X, tileIterator.Y, City.UndergroundItem.Pipe);
+						break;
+					default:
+						// Note: Hex codes over 0x23 are likely unused, but if they are used we would end up here.
+						break;
+				}
+
+				tileIterator.IncrementCurrentTile();
+			}
+
+			segmentReader.Dispose();
+			return city;
+		}
+
+		private City parseZoningMap(City city, BinaryReader segmentReader)
+		{
+			// Parse zoning and "building corner" information.
+
+			// b00001111. The zone information is encoded in bits 0-3
+			byte zoneMask = 15;
+			// b0001000. Set if building has a corner in the 'top right'.
+			byte cornerMask1 = 16;
+			// b00100000. Set if building has a corner in the 'bottom right'.
+			byte cornerMask2 = 32;
+			// b01000000. Set if building has a corner in the 'bottom left'.
+			byte cornerMask3 = 64;
+			// b10000000. Set if building has a corner in the 'top left'.
+			byte cornerMask4 = 128;
+			zoneCode tileZoneCode;
+
+			tileIterator.Reset();
+			byte rawByte;
+
+			while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
+			{
+				rawByte = segmentReader.ReadByte();
+
+				// A little bit-wise arithmetic to extract our 4-bit zone code.
+				tileZoneCode = (zoneCode)(rawByte & zoneMask);
+
+				switch (tileZoneCode)
+				{
+					case zoneCode.lightResidential:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.LightResidential);
+						break;
+					case zoneCode.denseResidential:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.DenseResidential);
+						break;
+					case zoneCode.lightCommercial:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.LightCommercial);
+						break;
+					case zoneCode.denseCommercial:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.DenseCommercial);
+						break;
+					case zoneCode.lightIndustrial:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.LightIndustrial);
+						break;
+					case zoneCode.denseIndustrial:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.DenseIndustrial);
+						break;
+					case zoneCode.military:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.MilitaryBase);
+						break;
+					case zoneCode.airport:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.Airport);
+						break;
+					case zoneCode.seaport:
+						city.SetZone(tileIterator.X, tileIterator.Y, City.Zone.Seaport);
+						break;
+				}
+
+				if (hasCorner(rawByte, cornerMask1))
+				{
+					city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.TopRight);
+				}
+				if (hasCorner(rawByte, cornerMask2))
+				{
+					city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.BottomRight);
+				}
+				if (hasCorner(rawByte, cornerMask3))
+				{
+					city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.BottomLeft);
+				}
+				if (hasCorner(rawByte, cornerMask4))
+				{
+					city.SetBuildingCorner(tileIterator.X, tileIterator.Y, Building.CornerCode.TopLeft);
+				}
+
+				tileIterator.IncrementCurrentTile();
+			}
+
+			segmentReader.Dispose();
+			return city;
+		}
+
+		private bool hasCorner(byte b, byte cornerMask)
+		{
+			return (b & cornerMask) == (byte)1;
+		}
+
+		private City parseBuildingMap(City city, BinaryReader segmentReader)
+		{
+			// This segment indicates what is above ground in each square.
+
+			// TODO: Shouldn't be relying on "Building.BuildingCode" order like this. BAD.
+			tileIterator.Reset();
+			byte rawByte;
+			Building.BuildingCode buildingCode;
+
+			while (segmentReader.BaseStream.Position < segmentReader.BaseStream.Length)
+			{
+				// This map contains on 'building code' for each square. 
+				// The building code is a one-byte integer value.
+				rawByte = segmentReader.ReadByte();
+				buildingCode = (Building.BuildingCode)rawByte;
+				city.SetBuilding(tileIterator.X, tileIterator.Y, buildingCode);
+
+				tileIterator.IncrementCurrentTile();
+			}
+
+			segmentReader.Dispose();
+			return city;
+		}
+
+		private City parseAltitudeMap(City city, BinaryReader reader, int segmentLength)
+		{
+			// Altitude map.
+			// This segment is NOT compressed. 
+			// Each square gets two bytes.
+
+			byte byteOne;
+			byte byteTwo;
+			int altitude;
+			// b00011111. Altitude is stored in bits 0-4.
+			byte altitudeMask = 31;
+
+			tileIterator.Reset();
+			long readerStopPosition = reader.BaseStream.Position + segmentLength;
+			while (reader.BaseStream.Position < readerStopPosition)
+			{
+				// Don't do anything with the first byte (at least for now).
+				byteOne = reader.ReadByte();
+				byteTwo = reader.ReadByte();
+
+				// In SC2000 the minimum altitude is 50 and the maximum is 3150, thus the 50's below.
+				altitude = ((altitudeMask & byteTwo) * 50) + 50;
+				city.SetAltitude(tileIterator.X, tileIterator.Y, altitude);
+
+				tileIterator.IncrementCurrentTile();
+			}
+			return city;
+		}
+
+		#endregion
 
         #region utility functions
 
