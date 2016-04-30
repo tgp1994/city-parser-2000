@@ -86,7 +86,7 @@ namespace CityParser2000
 		/// <returns></returns>
 		public Segments.DataSegment GetSegment(string type)
 		{
-			foreach (Segments.DataSegment dseg in segments)
+			foreach (Segments.DataSegment dseg in Segments)
 			{
 				if (type.Equals(dseg.Type))
 					return dseg;
