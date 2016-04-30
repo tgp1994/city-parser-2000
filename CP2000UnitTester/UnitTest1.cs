@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CityParser2000;
+using CityParser2000.Segments;
 using System.Diagnostics;
 
 namespace CP2000UnitTester
@@ -27,7 +28,7 @@ namespace CP2000UnitTester
 			Trace.WriteLine("City name from the City object is: " + cityName);
 			city.CityName = "UnitTest"; // Now attempt to write to the city name
 			// Verify
-			CityParser2000.Segments.CNAM cnamSeg = (CityParser2000.Segments.CNAM)city.GetSegment("CNAM");
+			CNAM cnamSeg = (CityParser2000.Segments.CNAM)city.GetSegment("CNAM");
 			Assert.AreEqual("UnitTest", cnamSeg.cityName);
 			// Put the old city name back
 			city.CityName = cityName;
@@ -37,7 +38,7 @@ namespace CP2000UnitTester
 		public void CheckMISC()
 		{
 			Trace.WriteLine("\n*MISC Segment*");
-			CityParser2000.Segments.MISC miscSeg = (CityParser2000.Segments.MISC)city.GetSegment("MISC");
+			MISC miscSeg = (MISC)city.GetSegment("MISC");
 			Trace.WriteLine(miscSeg.ToString(true));
 		}
 
@@ -45,8 +46,21 @@ namespace CP2000UnitTester
 		public void CheckALTM()
 		{
 			Trace.WriteLine("\n*ALTM Segment*");
-			CityParser2000.Segments.ALTM altmSeg = (CityParser2000.Segments.ALTM)city.GetSegment("ALTM");
+			ALTM altmSeg = (ALTM)city.GetSegment("ALTM");
 			Trace.WriteLine(altmSeg.ToString(0, 4, 0, 10));
+		}
+
+		[TestMethod]
+		public void TestAltitudeDescriptor()
+		{
+			int[] testTiles = new int[] { 0x0, 0x4, 0x84, 0xB400 };
+
+			for (int i = 0; i < testTiles.Length; i++)
+			{
+				AltitudeDescriptor ad = new AltitudeDescriptor(testTiles[i]);
+				Trace.Write("Tile " + i + ": ");
+				Trace.WriteLine(ad);
+			}
 		}
 	}
 }

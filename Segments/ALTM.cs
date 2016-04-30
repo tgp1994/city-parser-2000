@@ -55,10 +55,10 @@ namespace CityParser2000.Segments
 				for (int j = y_min; j <= y_max; j++)
 				{
 					ad = AltitudeData[i, j];
-					if (j % 6 == 0)
+					if (j % 5 == 0)
 						sb.AppendLine();
 					// Catch the case where the data is not filled yet.
-					sb.AppendFormat("[{0}, {1}]\t{2}\t", i, j, (ad != null ? ad.ToString() : "Null\t\t"));
+					sb.AppendFormat("[{0}, {1}]\t{2}\t", i, j, (ad != null ? ad.ToString() : "Null\t\t\t"));
 				}
 				sb.AppendLine();
 			}
@@ -102,13 +102,13 @@ namespace CityParser2000.Segments
 
 			// Some debugging for unknown bits
 			if ((rawValue & 0xFF60) != 0)
-				System.Diagnostics.Debug.WriteLine(String.Format("Myster bits were set in altitude data, value: {0:X}", rawValue));
+				System.Diagnostics.Debug.WriteLine(String.Format("Myster bits set in altitude data: {0:X}", rawValue));
 		}
 
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("Height: {0:D}ft. Water: " + WaterCovered.ToString(), AltInFeet);
+			sb.AppendFormat("<0x{0:X}> Height: {1:D}ft. Water: " + WaterCovered.ToString(), RawValue, AltInFeet);
 			return sb.ToString();
 		}
 	}

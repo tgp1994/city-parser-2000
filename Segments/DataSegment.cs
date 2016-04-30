@@ -61,7 +61,7 @@ namespace CityParser2000.Segments
 			StringBuilder sb = new StringBuilder();
 
 			sb.AppendLine("Type:\t" + Type);
-			sb.AppendLine("Length:\t" + Length);
+			sb.AppendLine("Length:\t" + Length + " bytes");
 
 			return sb.ToString();
 		}
