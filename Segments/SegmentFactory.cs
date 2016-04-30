@@ -14,22 +14,6 @@ namespace CityParser2000.Segments
 			string segmentName = stream.ReadString();
 			//For the sake of modularity, create the instance from the string.
 			newSeg = (DataSegment)System.Reflection.Assembly.GetExecutingAssembly().CreateInstance("CityParser2000.Segments." + segmentName);
-			/*switch (segmentName)
-			{
-				case "CNAM":
-					newSeg = new CNAM();
-					break;
-				case "MISC":
-					newSeg = new MISC();
-					break;
-				case "ALTM":
-					newSeg = new ALTM();
-					break;
-				default:
-					Debug.WriteLine("WARNING: Parsing segment as generic:");
-					newSeg = new DataSegment(segmentName);
-					break;
-			}*/
 
 			if (newSeg == null)
 			{

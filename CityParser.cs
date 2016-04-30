@@ -11,6 +11,10 @@ namespace CityParser2000
     public class CityParser
     {
         #region local constants
+
+		// A few constant header bytes.
+		const string HEADERCHUNK = "FORM";
+		const string FILETYPE = "SCDH";
         
         // Binary segments describing city maps which are solely integer values.
         private static readonly HashSet<string> integerMaps = new HashSet<string> { "XPLC", "XFIR", "XPOP", "XROG", "XTRF", "XPLT", "XVAL", "XCRM" };
@@ -91,23 +95,16 @@ namespace CityParser2000
 		/// <returns>A <see cref="City"/> instance reflecting data from <paramref name="binaryFilename"/></returns>
 		public static City ParseCityFile(string binaryFilename)
 		{
-			var city = new City();
+			City city;
 
 			using (FileStream reader = File.Open(binaryFilename, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				city.ParseHeader(reader); // Used for validation and sanity-checking before anything else is done.
+				city = new City(ParseHeader(reader));
 
 				// Begin walking through the file, handing off segment parsing to the appropriate parser.
-				//string segmentName;
-				//Int32 segmentLength;
 				while (reader.Position < reader.Length)
 				{
-					// TODO: Complete migration to new parser.
-					city.segments.Add(Segments.SegmentFactory.ParseSegment(reader));
-					// Parse segment data and store it in a City object. 
-					//segmentName = reader.ReadString();
-					//segmentLength = reader.Read4ByteInt();
-
+					city.Segments.Add(Segments.SegmentFactory.ParseSegment(reader));
 					/*
 					else if ("ALTM".Equals(segmentName))
 					{
@@ -181,7 +178,8 @@ namespace CityParser2000
 		/// Read in and validate the header of a city file.
 		/// </summary>
 		/// <param name="stream">File stream waiting at the header for instructions.</param>
-		private void ParseHeader(FileStream reader)
+		/// <returns>The length (in bytes) of the data portion of this file.</returns>
+		private static int ParseHeader(FileStream reader)
 		{
 			// Case for too small of a file
 			if (reader.Length < 12)
@@ -189,12 +187,14 @@ namespace CityParser2000
 
 			// Read 12-byte header.
 			string headChunk = reader.ReadString();
-			dataLength = reader.Read4ByteInt();
+			int dataLength = reader.Read4ByteInt();
 			string fileType = reader.ReadString();
 
 			// Make sure the header represents a valid city file.
 			if (!headChunk.Equals(HEADERCHUNK) || !fileType.Equals(FILETYPE))
 				throw new Exception("Invalid SC2000 file or corrupted header.");
+
+			return dataLength;
 		}
 
         private City parseIntegerMap(City city, string segmentName, BinaryReader segmentReader)

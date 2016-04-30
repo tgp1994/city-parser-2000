@@ -30,12 +30,14 @@ namespace CityParser2000
 		/// </summary>
 		public int DataLength { get; private set; }
 
+		/// <summary>
+		/// Maintain all segments specific to the data from which this city was generated.
+		/// </summary>
+		public List<Segments.DataSegment> Segments { get; private set; }
+
         #endregion
 
         #region public constants
-		// A few constant header bytes.
-		const string HEADERCHUNK = "FORM";
-		const string FILETYPE = "SCDH";
 
         /// <summary>
         /// Enumerates underground structures.
@@ -50,7 +52,6 @@ namespace CityParser2000
         #endregion
 
         #region local variables
-		List<Segments.DataSegment> segments = new List<Segments.DataSegment>();
 		CityMap map;
 
         private List<int> policeMap;
@@ -70,7 +71,8 @@ namespace CityParser2000
 
         public City(int dataLength = -1)
         {
-			map = new CityMap(); // Get the city tiles initialized.
+			map = new CityMap();
+			Segments = new List<Segments.DataSegment>();
 			DataLength = dataLength;
         }
 
