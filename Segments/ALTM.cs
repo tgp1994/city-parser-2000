@@ -27,6 +27,7 @@ namespace CityParser2000.Segments
 				while (ms.Position < ms.Length)
 				{
 					AltitudeData[i / 128, i % 127] = new AltitudeDescriptor(ms.Read2ByteInt());
+					i++;
 				}
 			}
 		}
