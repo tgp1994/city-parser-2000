@@ -15,9 +15,15 @@ namespace CityParser2000
         #region Public Properties
 
         /// <summary>
-        /// Altitude in meters.
+        /// Altitude in multiples of 100 + 50 feet.
+		/// <seealso cref="Segments.AltitudeDescriptor"/>
         /// </summary>
-        public int Altitude { get; set; }
+        public int Altitude { get; private set; }
+
+		/// <summary>
+		/// Returns the Altitude value converted into feet. Lowest value is 50 feet.
+		/// </summary>
+		public int AltInFeet { get { return (Altitude * 100) + 50; } }
 
         /// <summary>
         /// True if tile is supplied with water from the city water system.
@@ -207,7 +213,20 @@ namespace CityParser2000
         public void SetBuilding(Building.BuildingCode buildingCode)
         {
             building = new Building(buildingCode);
-        }
+		}
 
-    }
+		#region Parsers
+
+		/// <summary>
+		/// Read and process the basic tile data of an <see cref="Segments.AltitudeDescriptor"/>.
+		/// </summary>
+		/// <param name="ad"></param>
+		public void ParseAltitudeDescriptor(Segments.AltitudeDescriptor ad)
+		{
+			Altitude = ad.Altitude;
+			IsWaterCovered = ad.WaterCovered;
+		}
+
+		#endregion
+	}
 }
