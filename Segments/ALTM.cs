@@ -73,9 +73,14 @@ namespace CityParser2000.Segments
 	public class AltitudeDescriptor
 	{
 		/// <summary>
-		/// Number 0-31 representing altitude in feet, (x * 100) + 50. Lowest possible altitude is 50 ft.
+		/// Number 0-31 representing altitude of the tile.
 		/// </summary>
 		public int Altitude { get; private set; }
+
+		/// <summary>
+		/// Returns the Altitude value converted into feet. Lowest value is 50 feet.
+		/// </summary>
+		public int AltInFeet { get { return (Altitude * 100) + 50; } }
 
 		/// <summary>
 		/// Represents bit 7 which theoretically indicates whether or not a tile is covered in water. This is
@@ -103,7 +108,7 @@ namespace CityParser2000.Segments
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("Height: {0:D}ft. Water: " + WaterCovered.ToString(), (Altitude * 100) + 50);
+			sb.AppendFormat("Height: {0:D}ft. Water: " + WaterCovered.ToString(), AltInFeet);
 			return sb.ToString();
 		}
 	}
