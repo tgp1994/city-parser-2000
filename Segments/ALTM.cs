@@ -26,7 +26,7 @@ namespace CityParser2000.Segments
 				int i = 0;
 				while (ms.Position < ms.Length)
 				{
-					AltitudeData[i / 128, i % 127] = new AltitudeDescriptor(ms.Read2ByteInt());
+					AltitudeData[i % 127, i / 128] = new AltitudeDescriptor(ms.Read2ByteInt());
 					i++;
 				}
 			}
@@ -56,8 +56,8 @@ namespace CityParser2000.Segments
 				for (int j = y_min; j <= y_max; j++)
 				{
 					ad = AltitudeData[i, j];
-					if (j % 5 == 0)
-						sb.AppendLine();
+					/*if (j % 5 == 0)
+						sb.AppendLine();*/
 					// Catch the case where the data is not filled yet.
 					sb.AppendFormat("[{0}, {1}]\t{2}\t", i, j, (ad != null ? ad.ToString() : "Null\t\t\t"));
 				}
