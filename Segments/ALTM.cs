@@ -67,6 +67,11 @@ namespace CityParser2000.Segments
 
 			return sb.ToString();
 		}
+
+		internal override void PopulateCity(ref City city)
+		{
+			base.PopulateCity(ref city);
+		}
 	}
 
 	/// <summary>

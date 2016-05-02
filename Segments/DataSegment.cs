@@ -12,6 +12,8 @@ namespace CityParser2000.Segments
 	/// </summary>
 	public class DataSegment
 	{
+		#region Properties
+
 		/// <summary>
 		/// An identifier of the segment, always four bytes (characters) long.
 		/// </summary>
@@ -33,6 +35,8 @@ namespace CityParser2000.Segments
 		/// </summary>
 		public int RawDataFileOffset { get; internal set; }
 
+		#endregion
+
 		/// <summary>
 		/// Create the DataSegment object based off of the 8 byte segment header. Additional work should be done in
 		/// separate methods.
@@ -42,6 +46,8 @@ namespace CityParser2000.Segments
 		{
 			Type = type;
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Perform segment-specific processing on the raw data. At this point the four byte type has already been read
@@ -56,6 +62,12 @@ namespace CityParser2000.Segments
 			file.Read(RawData, 0, Length);
 		}
 
+		/// <summary>
+		/// Fills in the appropriate properties of the <see cref="City"/> object after parsing has completed.
+		/// </summary>
+		/// <param name="city"></param>
+		internal virtual void PopulateCity(ref City city);
+
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -65,5 +77,7 @@ namespace CityParser2000.Segments
 
 			return sb.ToString();
 		}
+
+		#endregion
 	}
 }

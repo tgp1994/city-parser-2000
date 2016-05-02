@@ -100,11 +100,14 @@ namespace CityParser2000
 			using (FileStream reader = File.Open(binaryFilename, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				city = new City(ParseHeader(reader));
+				Segments.DataSegment segment;
 
 				// Begin walking through the file, handing off segment parsing to the appropriate parser.
 				while (reader.Position < reader.Length)
 				{
-					city.Segments.Add(Segments.SegmentFactory.ParseSegment(reader));
+					segment = Segments.SegmentFactory.ParseSegment(reader);
+					segment.PopulateCity(ref city);
+					city.Segments.Add(segment);
 					/*
 					else if ("ALTM".Equals(segmentName))
 					{
