@@ -26,7 +26,8 @@ namespace CityParser2000.Segments
 				int i = 0;
 				while (ms.Position < ms.Length)
 				{
-					AltitudeData[i % 127, i / 128] = new AltitudeDescriptor(ms.Read2ByteInt());
+					AltitudeData[i % (CityMap.TILES_PER_SIDE - 1), i / CityMap.TILES_PER_SIDE] = 
+						new AltitudeDescriptor(ms.Read2ByteInt());
 					i++;
 				}
 			}

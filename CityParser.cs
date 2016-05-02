@@ -8,6 +8,9 @@ using System.Net;
 
 namespace CityParser2000
 {
+	/// <summary>
+	/// The <c>CityParser</c> type converts binary Sim City 2000 files to <see cref="City"/> <c>Objects</c>.
+	/// </summary>
     public class CityParser
     {
         #region local constants
@@ -70,9 +73,6 @@ namespace CityParser2000
 
         #region constructors
 
-        /// <summary>
-        ///  The <c>CityParser</c> type converts binary Sim City 2000 files to <see cref="City"/> <c>Objects</c>.
-        /// </summary>
         public CityParser () 
         {
             //tileIterator = new Utility.CityTileIterator(City.TilesPerSide);
@@ -528,35 +528,6 @@ namespace CityParser2000
 			}
 
 			segmentReader.Dispose();
-			return city;
-		}
-
-		private City parseAltitudeMap(City city, BinaryReader reader, int segmentLength)
-		{
-			// Altitude map.
-			// This segment is NOT compressed. 
-			// Each square gets two bytes.
-
-			byte byteOne;
-			byte byteTwo;
-			int altitude;
-			// b00011111. Altitude is stored in bits 0-4.
-			byte altitudeMask = 31;
-
-			tileIterator.Reset();
-			long readerStopPosition = reader.BaseStream.Position + segmentLength;
-			while (reader.BaseStream.Position < readerStopPosition)
-			{
-				// Don't do anything with the first byte (at least for now).
-				byteOne = reader.ReadByte();
-				byteTwo = reader.ReadByte();
-
-				// In SC2000 the minimum altitude is 50 and the maximum is 3150, thus the 50's below.
-				altitude = ((altitudeMask & byteTwo) * 50) + 50;
-				city.SetAltitude(tileIterator.X, tileIterator.Y, altitude);
-
-				tileIterator.IncrementCurrentTile();
-			}
 			return city;
 		}
 
