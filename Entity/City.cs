@@ -35,6 +35,8 @@ namespace CityParser2000
 		/// </summary>
 		public List<Segments.DataSegment> Segments { get; private set; }
 
+		public CityMap Map { get; private set; }
+
         #endregion
 
         #region public constants
@@ -52,7 +54,6 @@ namespace CityParser2000
         #endregion
 
         #region local variables
-		CityMap map;
 
         private List<int> policeMap;
         private List<int> firefigherMap;
@@ -71,7 +72,7 @@ namespace CityParser2000
 
         public City(int dataLength = -1)
         {
-			map = new CityMap();
+			Map = new CityMap();
 			Segments = new List<Segments.DataSegment>();
 			DataLength = dataLength;
         }

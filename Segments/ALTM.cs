@@ -70,7 +70,13 @@ namespace CityParser2000.Segments
 
 		internal override void PopulateCity(ref City city)
 		{
-			base.PopulateCity(ref city);
+			for (int x = 0; x < CityMap.TILES_PER_SIDE; x++)
+			{
+				for (int y = 0; y < CityMap.TILES_PER_SIDE; y++)
+				{
+					city.Map.Tiles[x, y].AltitudeDescriptor = AltitudeData[x, y];
+				}
+			}
 		}
 	}
 

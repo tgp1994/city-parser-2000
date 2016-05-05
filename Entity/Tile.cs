@@ -18,7 +18,25 @@ namespace CityParser2000
         /// Altitude in multiples of 100 + 50 feet.
 		/// <seealso cref="Segments.AltitudeDescriptor"/>
         /// </summary>
-        public int Altitude { get; private set; }
+        public int Altitude
+		{
+			get { return AltitudeDescriptor.Altitude; }
+
+			private set; 
+		}
+
+		/// <summary>
+		/// True if the tile is covered in water.
+		/// <seealso cref="Segments.AltitudeDescriptor"/>
+		/// </summary>
+		public bool IsWaterCovered
+		{
+			get { return AltitudeDescriptor.WaterCovered; }
+
+			private set;
+		}
+
+		public Segments.AltitudeDescriptor AltitudeDescriptor { get; set; }
 
 		/// <summary>
 		/// Returns the Altitude value converted into feet. Lowest value is 50 feet.
@@ -41,10 +59,6 @@ namespace CityParser2000
         /// True if the city can conduct water from the city water system.
         /// </summary>
         public bool IsPiped { get; set; }
-        /// <summary>
-        /// True if the tile is covered in water.
-        /// </summary>
-        public bool IsWaterCovered { get; set; }
         /// <summary>
         /// True if the tile is salt water, or would be salt water if it were water covered.
         /// </summary>
@@ -171,10 +185,7 @@ namespace CityParser2000
 
         #endregion
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public Tile()
+		public Tile()
         {
             IsWaterSupplied = false;
             IsPowered = false;
