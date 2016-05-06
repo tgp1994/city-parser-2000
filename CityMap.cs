@@ -29,5 +29,20 @@ namespace CityParser2000
                 }
             }
 		}
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine(base.ToString());
+
+			//Utility.CityTileIterator cti = new Utility.CityTileIterator(TILES_PER_SIDE);
+			/*while (cti.HasNext())
+			{
+				sb.AppendFormat("[{0:D}, {1:D}] " + Tiles[cti.X, cti.Y], cti.X, cti.Y);
+				if ()
+			}*/
+
+			return sb.ToString();
+		}
 	}
 }

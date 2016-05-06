@@ -86,6 +86,15 @@ namespace CityParser2000.Utility
             }
         }
 
+		/// <summary>
+		/// True if the iterator is not waiting at the end.
+		/// </summary>
+		/// <returns></returns>
+		public bool HasNext()
+		{
+			return (X < TilesPerSide || Y < TilesPerSide);
+		}
+
         /// <summary>
         /// Set X and Y coordinates to 0.
         /// </summary>

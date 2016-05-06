@@ -22,7 +22,7 @@ namespace CityParser2000
 		{
 			get { return AltitudeDescriptor.Altitude; }
 
-			private set; 
+			//private set { AltitudeDescriptor.Altitude = value; }
 		}
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace CityParser2000
 		{
 			get { return AltitudeDescriptor.WaterCovered; }
 
-			private set;
+			//private set;
 		}
 
 		public Segments.AltitudeDescriptor AltitudeDescriptor { get; set; }
@@ -191,7 +191,6 @@ namespace CityParser2000
             IsPowered = false;
             IsConductive = false;
             IsPiped = false;
-            IsWaterCovered = false;
             IsSalty = false;
 
             HasPipe = false;
@@ -203,7 +202,6 @@ namespace CityParser2000
             HasBuildingCornerBottomRight = false;
             HasBuildingCornerTopLeft = false;
             HasBuildingCornerTopRight = false;
-            Altitude = 0;
 
             IsDenseCommerical = false;
             IsDenseIndustrial = false;
@@ -226,16 +224,14 @@ namespace CityParser2000
             building = new Building(buildingCode);
 		}
 
-		#region Parsers
+		#region Functions
 
-		/// <summary>
-		/// Read and process the basic tile data of an <see cref="Segments.AltitudeDescriptor"/>.
-		/// </summary>
-		/// <param name="ad"></param>
-		public void ParseAltitudeDescriptor(Segments.AltitudeDescriptor ad)
+		public override string ToString()
 		{
-			Altitude = ad.Altitude;
-			IsWaterCovered = ad.WaterCovered;
+			StringBuilder sb = new StringBuilder();
+			sb.AppendFormat("Altitude: {0:D}ft. ", AltInFeet);
+			sb.AppendFormat("WaterCov: {0} ", IsWaterCovered);
+			return sb.ToString();
 		}
 
 		#endregion

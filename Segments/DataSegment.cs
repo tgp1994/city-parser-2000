@@ -66,7 +66,10 @@ namespace CityParser2000.Segments
 		/// Fills in the appropriate properties of the <see cref="City"/> object after parsing has completed.
 		/// </summary>
 		/// <param name="city"></param>
-		internal virtual void PopulateCity(ref City city);
+		internal virtual void PopulateCity(ref City city)
+		{
+			// Nothing to do here.
+		}
 
 		public override string ToString()
 		{
