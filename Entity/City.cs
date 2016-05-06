@@ -23,7 +23,7 @@ namespace CityParser2000
         /// <summary>
         /// The mayor of the city.
         /// </summary>
-        public string MayorName { get; set; }
+        public string MayorName { get; private set; }
 
 		/// <summary>
 		/// The length of the save file as determined from the 4 byte value in the header.
@@ -224,17 +224,6 @@ namespace CityParser2000
         }
 
         /// <summary>
-        /// Set altitude for the city tile at (<paramref name="x"/>, <paramref name="y"/>).
-        /// </summary>
-        /// <param name="x">Tile x-coordinate.</param>
-        /// <param name="y">Tile y-coordinate.</param>
-        /// <param name="altitude">Altitude in meters.</param>
-        public void SetAltitude(int x, int y, int altitude)
-        {
-            //tiles[x, y].Altitude = altitude;
-        }
-
-        /// <summary>
         /// Set police strength map for the city.
         /// </summary>
         /// <param name="mapData"></param>
@@ -315,7 +304,6 @@ namespace CityParser2000
             signs.Add(signText);
         }
 
-        #endregion // setters
-
+        #endregion
     }
 }
