@@ -42,7 +42,7 @@ namespace CityParser2000.Segments
 			return ToString(4, 4);
 		}
 
-		public string ToString(int CountX = 0, int CountY = 0)
+		public string ToString(int CountX, int CountY)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine(base.ToString());
@@ -53,7 +53,7 @@ namespace CityParser2000.Segments
 				for (int x = 0; x < CountX; x++)
 				{
 					TerrainDescriptor td = Terrain[x, y];
-					sb.AppendFormat("[{0}, {1}] {3}\n", x, y, td);
+					sb.AppendFormat("[{0}, {1}] {2}\n", x, y, td);
 				}
 			}
 
@@ -69,7 +69,7 @@ namespace CityParser2000.Segments
 
 		public TerrainDescriptor(byte data)
 		{
-			byte slopeData = 0;
+			byte slopeData = 0xFF;
 			Data = data;
 
 			if (data <= 0x0D)
@@ -158,7 +158,7 @@ namespace CityParser2000.Segments
 
 		public override string ToString()
 		{
-			return string.Format("<{0:X}>\tType: {1}\tSlope: {2}\n", Data, Type, Slope);
+			return string.Format("<0x{0:X}>\tType: {1}\tSlope: {2}", Data, Type, Slope);
 		}
 	}
 
@@ -168,6 +168,7 @@ namespace CityParser2000.Segments
 	/// </summary>
 	public enum TerrainSlope : byte
 	{
+		Undefined,
 		Flat,
 		WestEdge,
 		NorthEdge,
@@ -186,6 +187,7 @@ namespace CityParser2000.Segments
 
 	public enum TerrainType
 	{
+		Undefined,
 		Dry,
 		Submerged,
 		PartialSubmerged,

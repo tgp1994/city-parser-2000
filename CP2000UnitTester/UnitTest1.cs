@@ -81,7 +81,9 @@ namespace CP2000UnitTester
 		[TestMethod]
 		public void TestXTER()
 		{
-
+			Trace.WriteLine("\n*XTER Segment*");
+			XTER xterSeg = (XTER)city.GetSegment("XTER");
+			Trace.WriteLine(xterSeg.ToString());
 		}
 	}
 }

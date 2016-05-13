@@ -60,7 +60,7 @@ namespace CityParser2000.Segments
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine(base.ToString());
-			sb.AppendFormat("Size: {0} bytes, Uncompressed size: {1} bytes\n", Length, UncompressedLength);
+			sb.AppendFormat("UncompressedLength: {0} bytes\n", UncompressedLength);
 			return sb.ToString();
 		}
 	}
