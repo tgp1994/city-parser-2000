@@ -14,34 +14,25 @@ namespace CityParser2000
 
         #region Public Properties
 
-        /// <summary>
-        /// Altitude in multiples of 100 + 50 feet.
-		/// <seealso cref="Segments.AltitudeDescriptor"/>
-        /// </summary>
-        public int Altitude
-		{
-			get { return AltitudeDescriptor.Altitude; }
-
-			//private set { AltitudeDescriptor.Altitude = value; }
-		}
-
-		/// <summary>
-		/// True if the tile is covered in water.
-		/// <seealso cref="Segments.AltitudeDescriptor"/>
-		/// </summary>
-		public bool IsWaterCovered
-		{
-			get { return AltitudeDescriptor.WaterCovered; }
-
-			//private set;
-		}
-
 		public Segments.AltitudeDescriptor AltitudeDescriptor { get; set; }
-
 		/// <summary>
-		/// Returns the Altitude value converted into feet. Lowest value is 50 feet.
+		/// <seealso cref="Segments.AltitudeDescriptor.Altitude"/>
+		/// </summary>
+		public int Altitude { get { return AltitudeDescriptor.Altitude; } }
+		/// <summary>
+		/// Altitude in multiples of 100 + 50 feet.
+		/// <seealso cref="Altitude"/>
 		/// </summary>
 		public int AltInFeet { get { return (Altitude * 100) + 50; } }
+		/// <summary>
+		/// <seealso cref="Segments.AltitudeDescriptor.IsWaterCovered"/>
+		/// </summary>
+		public bool IsWaterCovered { get { return AltitudeDescriptor.WaterCovered; } }
+
+		public Segments.TerrainDescriptor TerrainDescriptor { get; set; }
+		public Segments.TerrainSlope TerrainSlope { get { return TerrainDescriptor.Slope; } }
+		public Segments.TerrainType TerrainType { get { return TerrainDescriptor.Type; } }
+
 
         /// <summary>
         /// True if tile is supplied with water from the city water system.
@@ -231,6 +222,8 @@ namespace CityParser2000
 			StringBuilder sb = new StringBuilder();
 			sb.AppendFormat("Altitude: {0:D}ft. ", AltInFeet);
 			sb.AppendFormat("WaterCov: {0} ", IsWaterCovered);
+			sb.AppendFormat("Type: {0} ", TerrainType);
+			sb.AppendFormat("Slope: {0}", TerrainSlope);
 			return sb.ToString();
 		}
 

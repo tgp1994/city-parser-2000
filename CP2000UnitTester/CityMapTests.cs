@@ -23,7 +23,7 @@ namespace CityParser2000
 		/// Check the first four tiles of the Map object for properly parsed ALTM data (altitude and water coverage).
 		/// </summary>
 		[TestMethod()]
-		public void CheckALTMData()
+		public void CheckCityMapData()
 		{
 			Tile tempTile;
 			for (int i = 0; i < 4; i++ )

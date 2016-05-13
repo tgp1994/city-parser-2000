@@ -59,6 +59,17 @@ namespace CityParser2000.Segments
 
 			return sb.ToString();
 		}
+
+		internal override void PopulateCity(ref City city)
+		{
+			for (int x = 0; x < CityMap.TILES_PER_SIDE; x++)
+			{
+				for (int y = 0; y < CityMap.TILES_PER_SIDE; y++)
+				{
+					city.Map.Tiles[x, y].TerrainDescriptor = Terrain[x, y];
+				}
+			}
+		}
 	}
 
 	public class TerrainDescriptor

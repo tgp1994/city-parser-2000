@@ -106,12 +106,6 @@ namespace CityParser2000
 					segment.PopulateCity(ref city);
 					city.Segments.Add(segment);
 					/*
-					else if ("XTER".Equals(segmentName))
-					{
-						// Terrain slope map. 
-						// Ignore for now. 
-						reader.ReadBytes(segmentLength);   
-					}
 					else if ("XBLD".Equals(segmentName))
 					{
 						// Buildings map.
