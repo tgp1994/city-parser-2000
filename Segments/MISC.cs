@@ -13,16 +13,16 @@ namespace CityParser2000.Segments
 	public class MISC : CompressedDataSegment
 	{
 		#region Properties and Fields
-		public int Rotation { get {	return Data[2]; } }
-		public int FoundingYear { get { return Data[3]; } }
-		public int ElapsedDays { get { return Data[4]; } } //Note: All months are 25 days
-		public int Money { get { return Data[5]; } }
-		public int SimNationPopulation { get { return Data[20]; } }
-		public int SeaLevel { get { return Data[912]; } }
+		public int Rotation { get {	return DataList[2]; } }
+		public int FoundingYear { get { return DataList[3]; } }
+		public int ElapsedDays { get { return DataList[4]; } } //Note: All months are 25 days
+		public int Money { get { return DataList[5]; } }
+		public int SimNationPopulation { get { return DataList[20]; } }
+		public int SeaLevel { get { return DataList[912]; } }
 		#endregion
 
 		#region Variables
-		List<int> Data = new List<int>();
+		List<int> DataList = new List<int>();
 		#endregion
 
 		public MISC() : base("MISC") { }
@@ -32,11 +32,11 @@ namespace CityParser2000.Segments
 			base.ParseSegment(file);
 
 			// RawData now has the uncompressed bytes, lets get them.
-			using (MemoryStream ms = new MemoryStream(RawData))
+			using (MemoryStream ms = new MemoryStream(Data))
 			{
 				while (ms.Position < ms.Length)
 				{
-					Data.Add(ms.Read4ByteInt());
+					DataList.Add(ms.Read4ByteInt());
 				}
 			}
 		}
@@ -47,10 +47,10 @@ namespace CityParser2000.Segments
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine(base.ToString());
 
-			for (int i = 0; i < Data.Count; ++i)
+			for (int i = 0; i < DataList.Count; ++i)
 			{
-				if (nonZeroOnly && Data[i] != 0)
-					sb.AppendLine(string.Format("{0}\t{1}", i, Data[i]));
+				if (nonZeroOnly && DataList[i] != 0)
+					sb.AppendLine(string.Format("{0}\t{1}", i, DataList[i]));
 			}
 
 			return sb.ToString();

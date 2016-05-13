@@ -62,5 +62,26 @@ namespace CP2000UnitTester
 				Trace.WriteLine(ad);
 			}
 		}
+
+		[TestMethod]
+		public void TestTerrainDescriptor()
+		{
+			// Expected results are: Dry flat, dry North edge, dry NWcorner, dry block, dry undefined, partially-
+			// submerged and south edge slope, waterfall, hole and east edge slope, undefined undefined
+			byte[] descriptorData = new byte[] { 0x0, 0x02, 0x09, 0x0E, 0x0F, 0x24, 0x3E, 0x49, 0xDE };
+
+			for (int i = 0; i < descriptorData.Length; i++)
+			{
+				TerrainDescriptor td = new TerrainDescriptor(descriptorData[i]);
+				Trace.Write("TD " + i + ": ");
+				Trace.WriteLine(td);
+			}
+		}
+
+		[TestMethod]
+		public void TestXTER()
+		{
+
+		}
 	}
 }

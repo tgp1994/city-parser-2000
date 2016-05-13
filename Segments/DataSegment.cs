@@ -28,7 +28,7 @@ namespace CityParser2000.Segments
 		/// <summary>
 		/// The segment bytes as they're read in from the city file.
 		/// </summary>
-		public byte[] RawData { get; internal set; }
+		internal byte[] Data { get; set; }
 
 		/// <summary>
 		/// Where in the city file this data was found.
@@ -58,8 +58,8 @@ namespace CityParser2000.Segments
 		{
 			Length = file.Read4ByteInt();
 			RawDataFileOffset = (int)file.Position;
-			RawData = new byte[Length];
-			file.Read(RawData, 0, Length);
+			Data = new byte[Length];
+			file.Read(Data, 0, Length);
 		}
 
 		/// <summary>

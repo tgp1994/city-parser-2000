@@ -18,10 +18,10 @@ namespace CityParser2000.Segments
 		internal override void ParseSegment(FileStream file)
 		{
 			base.ParseSegment(file);
-			if (RawData.Length != Math.Pow(CityMap.TILES_PER_SIDE, 2) * 2)
+			if (Data.Length != Math.Pow(CityMap.TILES_PER_SIDE, 2) * 2)
 				throw new Exception("ALTM data length incorrect.");
 
-			using (MemoryStream ms = new MemoryStream(RawData))
+			using (MemoryStream ms = new MemoryStream(Data))
 			{
 				int i = 0;
 				while (ms.Position < ms.Length)

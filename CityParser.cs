@@ -22,9 +22,6 @@ namespace CityParser2000
         // Binary segments describing city maps which are solely integer values.
         private static readonly HashSet<string> integerMaps = new HashSet<string> { "XPLC", "XFIR", "XPOP", "XROG", "XTRF", "XPLT", "XVAL", "XCRM" };
 
-        // Binary segments describing city maps in which the byte data is uniqure to each segment.
-        private static readonly HashSet<string> complexMaps = new HashSet<string> { "XTER", "XBLD", "XZON", "XUND", "XTXT", "XBIT", "ALTM" };
-
         // Binary codes that indicate what is underground in a tile. Multiples distinguish slope and direction.
         // Used when decoding XUND segment.
         private enum undergroundCode { 
