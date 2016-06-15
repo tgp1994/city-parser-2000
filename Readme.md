@@ -1,12 +1,13 @@
 ﻿City Parser 2000
 ================
-****
 
 ## Overview
 City Parser 2000 is a simple C# library which interprets and represents data from binary Sim City 2000&copy; files (.SC2 file format) as C# objects. This project is licensed under the GNU GPL v3 license. See LICENSE.md for more information.
 
 ## Current Status
 This project is going through an overhaul at the moment, to create a more modular and efficient codebase.
+
+**Update June 15:** Development is currently on hold while I work on creating a renderer to visualize most of the features being developed.
 
 ## Future Development
 - Further the already extensive amount of research into the SC2 format, especially where the MISC segment is concerned.
